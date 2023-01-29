@@ -1,0 +1,88 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <RootNamespace>CourterClient.Gui.Gui</RootNamespace>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>Logos\Courter.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Logos\Benutzer.png" />
+    <None Remove="Logos\BenutzerGrau.png" />
+    <None Remove="Logos\Courter.ico" />
+    <None Remove="Logos\Kalender.png" />
+    <None Remove="Logos\Schließen.png" />
+    <None Remove="Logos\SchließenGrau.png" />
+    <None Remove="Logos\SchlossGrau.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="AdminWindow\" />
+    <Folder Include="EmployeeWindow\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Logos\Benutzer.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Logos\BenutzerGrau.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Logos\Courter.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Logos\Kalender.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Logos\Schließen.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Logos\SchließenGrau.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Logos\SchlossGrau.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="App.xaml">
+      <Generator></Generator>
+      <XamlRuntime></XamlRuntime>
+      <SubType></SubType>
+    </Page>
+    <Page Update="MainWindow.xaml">
+      <Generator></Generator>
+      <XamlRuntime></XamlRuntime>
+      <SubType></SubType>
+    </Page>
+    <Page Update="BookingWindow.xaml">
+      <Generator></Generator>
+      <XamlRuntime></XamlRuntime>
+      <SubType></SubType>
+    </Page>
+    <Page Update="CalendarWindow\CalendarView.xaml">
+      <Generator></Generator>
+      <XamlRuntime></XamlRuntime>
+      <SubType></SubType>
+    </Page>
+    <Page Update="RegistrationWindow\RegistrationView.xaml">
+      <Generator></Generator>
+      <XamlRuntime></XamlRuntime>
+      <SubType></SubType>
+    </Page>
+    <Page Update="UserWindow\UserView.xaml">
+      <Generator></Generator>
+      <XamlRuntime></XamlRuntime>
+      <SubType></SubType>
+    </Page>
+    <Page Update="LoginWindow\LoginView.xaml">
+      <Generator></Generator>
+      <XamlRuntime></XamlRuntime>
+      <SubType></SubType>
+    </Page>
+  </ItemGroup>
+</Project>

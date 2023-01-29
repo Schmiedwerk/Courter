@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="48"
+   height="48"
+   viewBox="0 0 12.7 12.7"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
+   sodipodi:docname="Schloss.svg"
+   inkscape:export-filename="C:\Users\maximilian.malik\Documents\Berufsschule\Ausbildungsjahr #3\Lernfeld 12\gui\40dpt-Courter\Logos\Schloss.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     units="px"
+     inkscape:lockguides="true"
+     inkscape:zoom="14.493388"
+     inkscape:cx="19.491647"
+     inkscape:cy="13.24742"
+     inkscape:window-width="2560"
+     inkscape:window-height="1377"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g1231"
+       style="opacity:0.5"
+       inkscape:export-filename="C:\Users\maximilian.malik\Documents\Berufsschule\Ausbildungsjahr #3\Lernfeld 12\gui\40dpt-Courter\Logos\SchlossGrau.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96">
+      <path
+         id="rect3638"
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:5.66929;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill;opacity:1"
+         d="M 8.8828125 18.421875 L 8.8828125 44.878906 L 39.117188 44.878906 L 39.117188 18.421875 L 8.8828125 18.421875 z M 23.998047 24.392578 A 3.9328278 3.9328278 0 0 1 27.931641 28.324219 A 3.9328278 3.9328278 0 0 1 25.660156 31.888672 L 28.466797 38.908203 L 19.53125 38.908203 L 22.337891 31.888672 A 3.9328278 3.9328278 0 0 1 20.066406 28.324219 A 3.9328278 3.9328278 0 0 1 23.998047 24.392578 z "
+         transform="scale(0.26458333)" />
+      <path
+         style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:1.254;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill;opacity:1"
+         id="path3742"
+         sodipodi:type="arc"
+         sodipodi:cx="-6.3500242"
+         sodipodi:cy="-5.4688425"
+         sodipodi:rx="2.5728037"
+         sodipodi:ry="2.5728028"
+         sodipodi:start="0"
+         sodipodi:end="3.1354603"
+         sodipodi:arc-type="slice"
+         d="m -3.7772205,-5.4688425 a 2.5728037,2.5728028 0 0 1 -2.5649151,2.5727907 2.5728037,2.5728028 0 0 1 -2.580644,-2.5570135 l 2.5727554,-0.015777 z"
+         transform="scale(-1)" />
+    </g>
+  </g>
+</svg>

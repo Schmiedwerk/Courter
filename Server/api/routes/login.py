@@ -1,0 +1,22 @@
+from fastapi import APIRouter, Depends
+from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from datetime import timedelta
+
+from ..schemes import UserInternal, AccessToken
+
+from ..db.access import get_session
+from ..security import authenticate_user, create_access_token
+
+
+ROUTER = APIRouter(tags=['login'])
+
+
+@ROUTER.post('/token')
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
+                                 session: AsyncSession = Depends(get_session)) -> AccessToken:
+    user: UserInternal = await authenticate_user(form_data.username, form_data.password, session)
+    token = create_access_token(user, expires_delta=timedelta(minutes=20))
+
+    return AccessToken(access_token=token, token_type='bearer')

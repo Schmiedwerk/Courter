@@ -5,11 +5,15 @@ from jose import jwt, JWTError
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from typing import Any, Optional, Union
+from typing import Type, Optional, Union
 from datetime import datetime, timedelta
 
-from .exceptions import INCOMPLETE_CREDENTIALS_EXCEPTION, INVALID_CREDENTIALS_EXCEPTION
-from ..db.users import get_user
+from ..db.models import Admin, Employee, Customer
+from ..db.users import get_user, role_from_class
+
+from .exceptions import (
+    INCOMPLETE_CREDENTIALS_EXCEPTION, INVALID_CREDENTIALS_EXCEPTION, ROLE_EXCEPTION, INVALID_TOKEN_EXCEPTION
+)
 from ..schemes.user import UserInternal, UserFromToken
 
 
@@ -35,7 +39,7 @@ async def authenticate_user(username: str, password: str,
     return user
 
 
-def user_from_token(token: str = Depends(_OAUTH2_BEARER)) -> UserFromToken:
+async def user_from_token(token: str = Depends(_OAUTH2_BEARER)) -> UserFromToken:
     try:
         payload = jwt.decode(token, KEY, ALGORITHM)
         username = payload.get('sub')
@@ -50,7 +54,15 @@ def user_from_token(token: str = Depends(_OAUTH2_BEARER)) -> UserFromToken:
         )
 
     except JWTError:
-        raise INVALID_CREDENTIALS_EXCEPTION
+        raise INVALID_TOKEN_EXCEPTION
+
+
+def validate_role(cls: Union[Type[Admin], Type[Employee], Type[Customer]],
+                        user: UserFromToken) -> UserFromToken:
+    if user.role != role_from_class(cls):
+        raise ROLE_EXCEPTION
+
+    return user
 
 
 def create_access_token(user: UserFromToken, expires_delta: Optional[timedelta] = None) -> str:

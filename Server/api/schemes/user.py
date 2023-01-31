@@ -9,13 +9,6 @@ PASSWORD_MAX_LENGTH = 16
 class _UserBase(BaseModel):
     username: str = Field(min_length=USERNAME_MIN_LENGTH, max_length=USERNAME_MAX_LENGTH)
 
-    class Config:
-        schema_extra = {
-            'example': {
-                'username': 'bjarne_stroustrup'
-            }
-        }
-
 
 class UserIn(_UserBase):
     password: str = Field(min_length=PASSWORD_MIN_LENGTH, max_length=PASSWORD_MAX_LENGTH)
@@ -23,7 +16,7 @@ class UserIn(_UserBase):
     class Config:
         schema_extra = {
             'example': {
-                'username': 'bjarne_stroustrup',
+                'username': 'bjarne_s',
                 'password': 'ilovepython91'
             }
         }
@@ -35,7 +28,7 @@ class UserOut(_UserBase):
     class Config:
         schema_extra = {
             'example': {
-                'username': 'bjarne_stroustrup',
+                'username': 'AndersH.',
                 'id': 42
             }
         }

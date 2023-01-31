@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..db.access import get_session
 from ..db.models import Customer
 
-from ..administration import make_account_manager
+from ..administration.accounts import AccountCreator, make_account_manager
 from ..security import user_from_token
 from ..schemes.user import (
     UserIn, UserOut, UserFromToken, USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH,
@@ -24,7 +24,7 @@ async def get_my_info(user: UserFromToken = Depends(user_from_token),
 @ROUTER.post('/new')
 async def create_account(user: UserIn, session: AsyncSession = Depends(get_session)) -> UserOut:
     # only customers can create an account this way
-    return await make_account_manager(user, Customer).create(session)
+    return await AccountCreator(Customer, user).create(session)
 
 
 @ROUTER.put('/username')

@@ -5,11 +5,10 @@ from sqlalchemy import (
     Column, Integer, String, Date, Time, ForeignKey, CheckConstraint,
     update, delete, select
 )
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, selectinload, noload
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.engine import Row
 
-from typing import Union, Any
+from typing import Union, Any, Type
 from collections.abc import Iterable
 import datetime
 
@@ -24,7 +23,7 @@ _Base = declarative_base()
 
 class _BasicCrud:
     @classmethod
-    async def _create(cls, session: AsyncSession, **kwargs) -> Any:
+    async def _create(cls: Any, session: AsyncSession, **kwargs) -> Any:
         instance = cls(**kwargs)
         session.add(instance)
         await session.commit()
@@ -32,11 +31,11 @@ class _BasicCrud:
         return instance
 
     @classmethod
-    async def get_all_attrs(cls, session: AsyncSession, id_: int) -> Union[Any, None]:
+    async def get_all_attrs(cls: Any, session: AsyncSession, id_: int) -> Union[Any, None]:
         return await session.get(cls, id_)
 
     @classmethod
-    async def update(cls, session: AsyncSession, id_: int, **kwargs) -> None:
+    async def update(cls: Any, session: AsyncSession, id_: int, **kwargs) -> None:
         query = (update(cls)
                  .where(cls.id == id_)
                  .values(**kwargs)
@@ -47,7 +46,7 @@ class _BasicCrud:
 
     # TODO: cascading delete on relationships? sqlalchemy doc
     @classmethod
-    async def delete(cls, session: AsyncSession, id_: int) -> None:
+    async def delete(cls: Any, session: AsyncSession, id_: int) -> None:
         query = (delete(cls)
                  .where(cls.id == id_)
                  .execution_options(synchronize_session='fetch'))
@@ -58,12 +57,12 @@ class _BasicCrud:
 
 class _UserAccess:
     @classmethod
-    async def create(cls, session: AsyncSession, username: str,
-                     pw_hash: str) -> Union[Admin, Employee, Customer]:
+    async def create(cls: Union[Type[Admin], Type[Employee], Type[Customer]], session: AsyncSession,
+                     username: str, pw_hash: str) -> Union[Admin, Employee, Customer]:
         return await cls._create(session, username=username, pw_hash=pw_hash)
 
     @classmethod
-    async def get(cls, session: AsyncSession,
+    async def get(cls: Union[Type[Admin], Type[Employee], Type[Customer]], session: AsyncSession,
                   id_or_name: Union[str, int]) -> Union[Admin, Employee, Customer, None]:
         query = select(cls.id, cls.username, cls.pw_hash)
         if isinstance(id_or_name, int):
@@ -77,7 +76,8 @@ class _UserAccess:
         return result.one_or_none()
 
     @classmethod
-    async def get_all(cls, session: AsyncSession) -> Iterable[Union[Admin, Employee, Customer]]:
+    async def get_all(cls: Union[Type[Admin], Type[Employee], Type[Customer]],
+                      session: AsyncSession) -> Iterable[Union[Admin, Employee, Customer]]:
         query = select(cls.id, cls.username)
         return await session.execute(query)
 
@@ -124,16 +124,16 @@ class Booking(_Base, _BasicCrud):
         CheckConstraint(f'guest_name IS NULL '
                         f'OR CHAR_LENGTH(guest_name) >= {USERNAME_MIN_LENGTH}',
                         name='guest_name_min_length'),
-        CheckConstraint('(user_id IS NOT NULL AND guest_name IS NULL) '
-                        'OR (user_id is NULL AND guest_name is NOT NULL)',
-                        name='user_guest_mutually_exclusive')
+        CheckConstraint('(customer_id IS NOT NULL AND guest_name IS NULL) '
+                        'OR (customer_id is NULL AND guest_name is NOT NULL)',
+                        name='customer_guest_mutually_exclusive')
     )
 
     id = Column(Integer, primary_key=True, index=True)
     date = Column(Date, nullable=False, index=True)
     guest_name = Column(String(USERNAME_MAX_LENGTH))
 
-    user_id = Column(Integer, ForeignKey('customers.id'))
+    customer_id = Column(Integer, ForeignKey('customers.id'))
     timeslot_id = Column(Integer, ForeignKey('timeslots.id'), nullable=False)
     court_id = Column(Integer, ForeignKey('courts.id'), nullable=False)
 
@@ -142,23 +142,35 @@ class Booking(_Base, _BasicCrud):
     court = relationship('Court', back_populates='bookings', lazy='selectin')
 
     @staticmethod
-    async def create(session: AsyncSession, date: datetime.date, guest_name: str,
-                     user_id: int, timeslot_id: int, court_id: int) -> Booking:
+    async def create(session: AsyncSession, date: datetime.date, guest_name: Union[str, None],
+                     customer_id: Union[int, None], timeslot_id: int, court_id: int) -> Booking:
         return await Booking._create(session, date=date, guest_name=guest_name,
-                                     user_id=user_id, timeslot_id=timeslot_id,
+                                     customer_id=customer_id, timeslot_id=timeslot_id,
                                      court_id=court_id)
 
     @staticmethod
-    async def get_all(session: AsyncSession) -> Iterable[Row]:
-        query = (select(Booking.id, Booking.date, Booking.guest_name, Booking.user_id,
-                        Booking.timeslot_id, Booking.court_id))
+    async def get(session: AsyncSession, id_: int) -> Union[Booking, None]:
+        query = select(Booking.id, Booking.date, Booking.guest_name, Booking.customer_id,
+                       Booking.timeslot_id, Booking.court_id).filter_by(id=id_)
+        result = await session.execute(query)
+        return result.one_or_none()
+
+    @staticmethod
+    async def get_filtered(session: AsyncSession, **kwargs) -> Iterable[Booking]:
+        query = select(Booking.id, Booking.date, Booking.guest_name, Booking.customer_id,
+                       Booking.timeslot_id, Booking.court_id).filter_by(**kwargs)
         return await session.execute(query)
 
     @staticmethod
-    async def get_filtered(session: AsyncSession, **kwargs) -> Iterable[Row]:
-        query = (select(Booking.id, Booking.date, Booking.guest_name, Booking.user_id,
-                        Booking.timeslot_id, Booking.court_id).filter_by(**kwargs))
+    async def get_all(session: AsyncSession) -> Iterable[Booking]:
+        query = select(Booking.id, Booking.date, Booking.guest_name, Booking.customer_id,
+                       Booking.timeslot_id, Booking.court_id)
         return await session.execute(query)
+
+    @staticmethod
+    async def get_all_attrs_filtered(session: AsyncSession, **kwargs) -> Iterable[Booking]:
+        query = select(Booking).filter_by(**kwargs).options(selectinload(Booking.court).noload(Court.closings))
+        return await session.scalars(query)
 
 
 class Timeslot(_Base, _BasicCrud):
@@ -177,21 +189,21 @@ class Timeslot(_Base, _BasicCrud):
         return await Timeslot._create(session, start=start, end=end)
 
     @staticmethod
-    async def get_all(session: AsyncSession) -> Iterable[Row]:
-        query = select(Timeslot.id, Timeslot.start, Timeslot.end)
-        return await session.execute(query)
-
-    @staticmethod
-    async def get_by_start(session: AsyncSession, start: datetime.time) -> Union[Row, None]:
-        query = select(Timeslot).filter_by(start=start)
+    async def get(session: AsyncSession, id_: int) -> Union[Timeslot, None]:
+        query = select(Timeslot.id, Timeslot.start, Timeslot.end).filter_by(id=id_)
         result = await session.execute(query)
         return result.one_or_none()
+
+    @staticmethod
+    async def get_all(session: AsyncSession) -> Iterable[Timeslot]:
+        query = select(Timeslot.id, Timeslot.start, Timeslot.end)
+        return await session.execute(query)
 
 
 class Court(_Base, _BasicCrud):
     NAME_MIN_LENGTH = 2
-    NAME_MAX_LENGTH = 20
-    SURFACE_MIN_LENGTH = 2
+    NAME_MAX_LENGTH = 25
+    SURFACE_MIN_LENGTH = 1
     SURFACE_MAX_LENGTH = 20
 
     __tablename__ = 'courts'
@@ -215,8 +227,21 @@ class Court(_Base, _BasicCrud):
         return await Court._create(session, name=name, surface=surface)
 
     @staticmethod
-    async def get_all(cls, session: AsyncSession) -> Iterable[Row]:
-        query = select(cls.id, cls.name, cls.surface)
+    async def get(session: AsyncSession, id_or_name: Union[int, str]) -> Union[Court, None]:
+        query = select(Court.id, Court.name, Court.surface)
+        if isinstance(id_or_name, int):
+            query = query.filter_by(id=id_or_name)
+        elif isinstance(id_or_name, str):
+            query = query.filter_by(name=id_or_name)
+        else:
+            raise TypeError('id or name expected')
+
+        result = await session.execute(query)
+        return result.one_or_none()
+
+    @staticmethod
+    async def get_all(session: AsyncSession) -> Iterable[Court]:
+        query = select(Court.id, Court.name, Court.surface)
         return await session.execute(query)
 
 
@@ -235,16 +260,28 @@ class Closing(_Base, _BasicCrud):
     end_timeslot = relationship('Timeslot', foreign_keys=[end_timeslot_id], lazy='selectin')
 
     @staticmethod
+    async def get(session: AsyncSession, id_: int) -> Union[Closing, None]:
+        query = select(Closing.id, Closing.date, Closing.start_timeslot_id,
+                       Closing.end_timeslot_id, Closing.court_id).filter_by(id=id_)
+        result = await session.execute(query)
+        return result.one_or_none()
+
+    @staticmethod
     async def create(session: AsyncSession, date: datetime.date, start_timeslot_id: int,
                      end_timeslot_id: int, court_id: int) -> Closing:
         return await Closing._create(session, date=date, start_timeslot_id=start_timeslot_id,
                                      end_timeslot_id=end_timeslot_id, court_id=court_id)
 
     @staticmethod
-    async def get_filtered(session: AsyncSession, **kwargs) -> Iterable[Row]:
+    async def get_filtered(session: AsyncSession, **kwargs) -> Iterable[Closing]:
         query = (select(Closing.id, Closing.date, Closing.start_timeslot_id,
                         Closing.end_timeslot_id, Closing.court_id).filter_by(**kwargs))
         return await session.execute(query)
+
+    @staticmethod
+    async def get_all_attrs_filtered(session: AsyncSession, **kwargs) -> Iterable[Closing]:
+        query = select(Closing).filter_by(**kwargs)
+        return await session.scalars(query)
 
 
 async def create_tables():

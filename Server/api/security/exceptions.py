@@ -15,6 +15,12 @@ INVALID_CREDENTIALS_EXCEPTION = HTTPException(
     headers=_AUTHENTICATE_HEADER
 )
 
+INVALID_TOKEN_EXCEPTION = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail='invalid access token',
+    headers=_AUTHENTICATE_HEADER
+)
+
 ROLE_EXCEPTION = HTTPException(
     status_code=status.HTTP_403_FORBIDDEN,
     detail='insufficient rights',

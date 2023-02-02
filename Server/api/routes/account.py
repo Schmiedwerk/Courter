@@ -16,15 +16,9 @@ ROUTER = APIRouter(prefix='/account', tags=['account'])
 
 
 @ROUTER.get('')
-async def get_my_info(user: UserFromToken = Depends(user_from_token),
-                      session: AsyncSession = Depends(get_session)) -> UserOut:
+async def get_info(user: UserFromToken = Depends(user_from_token),
+                   session: AsyncSession = Depends(get_session)) -> UserOut:
     return await make_account_manager(user).get(session)
-
-
-@ROUTER.post('/new')
-async def create_account(user: UserIn, session: AsyncSession = Depends(get_session)) -> UserOut:
-    # only customers can create an account this way
-    return await AccountCreator(Customer, user).create(session)
 
 
 @ROUTER.put('/username')
@@ -42,6 +36,6 @@ async def change_password(new_password: str = Query(min_length=PASSWORD_MIN_LENG
 
 
 @ROUTER.delete('')
-async def delete_my_account(user: UserFromToken = Depends(user_from_token),
-                            session: AsyncSession = Depends(get_session)) -> None:
+async def delete_account(user: UserFromToken = Depends(user_from_token),
+                         session: AsyncSession = Depends(get_session)) -> None:
     return await make_account_manager(user).delete(session)

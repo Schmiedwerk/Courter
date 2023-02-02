@@ -10,6 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Flurl" Version="3.0.7" />
     <PackageReference Include="Flurl.Http" Version="3.2.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.26.0" />
   </ItemGroup>
 
@@ -17,10 +18,12 @@
     <None Remove="Exceptions\" />
     <None Remove="Models\" />
     <None Remove="Interfaces\" />
+    <None Remove="RouteClients\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Exceptions\" />
     <Folder Include="Models\" />
     <Folder Include="Interfaces\" />
+    <Folder Include="RouteClients\" />
   </ItemGroup>
 </Project>

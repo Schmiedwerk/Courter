@@ -7,6 +7,7 @@ public class UserRoleException : Exception
 	{ }
 
 	public UserRoleException(string message)
+		: base(message)
 	{ }
 }
 

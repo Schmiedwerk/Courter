@@ -25,4 +25,4 @@ def _make_exception(status_code: status, detail: Optional[str] = None) -> HTTPEx
 # see https://stackoverflow.com/questions/9269040/which-http-response-code-for-this-email-is-already-registered
 USERNAME_UNAVAILABLE_EXCEPTION = conflict('username unavailable')
 
-ACCESS_DENIED_EXCEPTION = _make_exception(status.HTTP_403_FORBIDDEN, 'naccess to the requested resource denied')
+ACCESS_DENIED_EXCEPTION = _make_exception(status.HTTP_403_FORBIDDEN, 'access to the requested resource denied')

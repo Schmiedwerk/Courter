@@ -24,7 +24,7 @@ ROUTER = APIRouter(
 
 
 @ROUTER.get('/bookings/{date}')
-async def get_all_bookings_for_date(date: datetime.date,
+async def get_bookings_for_date(date: datetime.date,
                                     session: AsyncSession = Depends(get_session)) -> list[BookingOut]:
     return list(await BookingManager.all_by_date(session, date))
 
@@ -45,7 +45,7 @@ async def delete_guest_booking(booking_id: int, session: AsyncSession = Depends(
 
 
 @ROUTER.get('/closings/{date}')
-async def get_all_closings_for_date(date: datetime.date,
+async def get_closings_for_date(date: datetime.date,
                                     session: AsyncSession = Depends(get_session)) -> list[ClosingOut]:
     return list(await ClosingManager.all_by_date(session, date))
 

@@ -1,12 +1,13 @@
-﻿namespace CourterClient.ApiClient;
+﻿using System;
+using Newtonsoft.Json;
 
-internal record TokenResponse
-{
-    internal string? Access_Token { get; init; }
-    internal string? Token_Type { get; init; }
-}
+namespace CourterClient.ApiClient;
 
-internal record DetailResponse
-{
-    internal string? Detail { get; init; } 
-}
+internal record Token(
+    [property: JsonProperty("access_token")] string AccessToken,
+    [property: JsonProperty("token_type")] string TokenType
+);
+
+internal record HttpExceptionBody(
+    [property: JsonProperty("detail")] string? Detail
+);

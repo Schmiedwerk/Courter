@@ -8,11 +8,13 @@ _TODAY = datetime.datetime.now().date()
 _BOOKING_SPAN = datetime.timedelta(days=60)
 
 
-class CustomerBookingIn(BaseModel):
+class Booking(BaseModel):
     date: datetime.date
     timeslot_id: int
     court_id: int
 
+
+class CustomerBookingIn(Booking):
     @validator('date')
     def check_date(cls, date: datetime.date) -> datetime.date:
         if not (_TODAY <= date <= _TODAY + _BOOKING_SPAN):
@@ -43,7 +45,7 @@ class GuestBookingIn(CustomerBookingIn):
         }
 
 
-class BookingOut(CustomerBookingIn):
+class BookingOut(Booking):
     id: int
     customer_id: Optional[int]
     guest_name: Optional[str]

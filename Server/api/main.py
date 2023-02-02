@@ -1,18 +1,18 @@
 from fastapi import FastAPI
 
-from .routes import public, login, account, admin, employee, customer
+from .routes import login, account, admin, employee, customer, public
 from .db.access import init_db_access, cleanup_db_access
 from .db.models import create_tables
 
 
 app = FastAPI()
 
-app.include_router(public.ROUTER)
 app.include_router(login.ROUTER)
 app.include_router(account.ROUTER)
 app.include_router(admin.ROUTER)
 app.include_router(employee.ROUTER)
 app.include_router(customer.ROUTER)
+app.include_router(public.ROUTER)
 
 
 @app.get('/')

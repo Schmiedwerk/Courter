@@ -5,12 +5,14 @@ _TODAY = datetime.datetime.now().date()
 _CLOSING_SPAN = datetime.timedelta(365)
 
 
-class ClosingIn(BaseModel):
+class _ClosingBase(BaseModel):
     date: datetime.date
     start_timeslot_id: int
     end_timeslot_id: int
     court_id: int
 
+
+class ClosingIn(_ClosingBase):
     @validator('date')
     def check_date(cls, date: datetime.date) -> datetime.date:
         if not (_TODAY <= date <= _TODAY + _CLOSING_SPAN):
@@ -28,7 +30,7 @@ class ClosingIn(BaseModel):
         }
 
 
-class ClosingOut(ClosingIn):
+class ClosingOut(_ClosingBase):
     id: int
 
     class Config:

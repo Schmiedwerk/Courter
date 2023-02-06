@@ -1,4 +1,5 @@
 ﻿using CourterClient.Gui.CalendarWindow;
+using CourterClient.Gui.Gui.UserWindow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,30 +18,10 @@ namespace CourterClient.Gui.UserWindow
 {
     public partial class UserView : Window
     {
-        public List<string> courts = new List<string>();
-        public List<string> slots = new List<string>();
-
         public UserView()
         {
             InitializeComponent();
-            FillCourts();
-            FillSlots();
-        }
-
-        public void FillCourts()
-        {
-            courts.Append("Wimbledon");
-            courts.Append("New York");
-            courts.Append("Melbourne");
-            courts.Append("Paris");
-        }
-
-        public void FillSlots()
-        {
-            for(int i = 10; i <= 22; i++)
-            {
-                slots.Append($"{i}:00 - {i + 1}:00");
-            }
+            this.DataContext = new UserViewModel();
         }
 
         private void Image_MouseUp(object sender, MouseButtonEventArgs e)
@@ -52,6 +33,12 @@ namespace CourterClient.Gui.UserWindow
         {
             var cal = new CalendarView();
             cal.ShowDialog();
+        }
+
+        private void Border_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                this.DragMove();
         }
     }
 }

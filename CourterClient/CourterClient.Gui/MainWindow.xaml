@@ -1,107 +1,347 @@
-﻿<Window x:Class="CourterClient.Gui.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CourterClient.Gui"
-        mc:Ignorable="d"
-        Title="40dpt_COURTER" 
-        Height="450" 
-        Width="800">
+﻿<Window
+    x:Class="CourterClient.Gui.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:CourterClient.Gui"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="40dpt_COURTER"
+    Width="800"
+    Height="450"
+    mc:Ignorable="d">
     <Window.DataContext>
         <local:MainWindowViewModel />
     </Window.DataContext>
     <Grid x:Name="mainGrid">
         <Grid.ColumnDefinitions>
-			<ColumnDefinition Width="1*" />
-			<ColumnDefinition Width="1*" />
-			<ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
-		</Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="0" Grid.Column="2" HorizontalContentAlignment="Center">Test</Label>
-        <Button Grid.Row="0" Grid.Column="1" HorizontalContentAlignment="Center">-</Button>
-        <Button Grid.Row="0" Grid.Column="3" HorizontalContentAlignment="Center">+</Button>
-        <Label Grid.Row="1" Grid.Column="1" HorizontalContentAlignment="Center">Australian</Label>
-        <Label Grid.Row="1" Grid.Column="2" HorizontalContentAlignment="Center">French</Label>
-        <Label Grid.Row="1" Grid.Column="3" HorizontalContentAlignment="Center">Wimbledon</Label>
-        <Label Grid.Row="1" Grid.Column="4" HorizontalContentAlignment="Center">US</Label>
-        <Label Grid.Row="2" Grid.Column="0" HorizontalContentAlignment="Center">10:00 - 11:00</Label>
-        <Label Grid.Row="3" Grid.Column="0" HorizontalContentAlignment="Center">11:00 - 12:00</Label>
-        <Label Grid.Row="4" Grid.Column="0" HorizontalContentAlignment="Center">12:00 - 13:00</Label>
-        <Label Grid.Row="5" Grid.Column="0" HorizontalContentAlignment="Center">13:00 - 14:00</Label>
-        <Label Grid.Row="6" Grid.Column="0" HorizontalContentAlignment="Center">14:00 - 15:00</Label>
-        <Label Grid.Row="7" Grid.Column="0" HorizontalContentAlignment="Center">15:00 - 16:00</Label>
-        <Label Grid.Row="8" Grid.Column="0" HorizontalContentAlignment="Center">16:00 - 17:00</Label>
-        <Label Grid.Row="9" Grid.Column="0" HorizontalContentAlignment="Center">17:00 - 18:00</Label>
-        <Label Grid.Row="10" Grid.Column="0" HorizontalContentAlignment="Center">18:00 - 19:00</Label>
-        <Label Grid.Row="11" Grid.Column="0" HorizontalContentAlignment="Center">19:00 - 20:00</Label>
-        <Label Grid.Row="12" Grid.Column="0" HorizontalContentAlignment="Center">20:00 - 21:00</Label>
-        <Label Grid.Row="13" Grid.Column="0" HorizontalContentAlignment="Center">21:00 - 22:00</Label>
-        <Button Margin="1" Grid.Column="1" Grid.Row="2" />
-        <Button Margin="1" Grid.Column="2" Grid.Row="2" />
-        <Button Margin="1" Grid.Column="3" Grid.Row="2" />
-        <Button Margin="1" Grid.Column="4" Grid.Row="2" />
-        <Button Margin="1" Grid.Column="1" Grid.Row="3" />
-        <Button Margin="1" Grid.Column="2" Grid.Row="3" />
-        <Button Margin="1" Grid.Column="3" Grid.Row="3" />
-        <Button Margin="1" Grid.Column="4" Grid.Row="3" />
-        <Button Margin="1" Grid.Column="1" Grid.Row="4" />
-        <Button Margin="1" Grid.Column="2" Grid.Row="4" />
-        <Button Margin="1" Grid.Column="3" Grid.Row="4" />
-        <Button Margin="1" Grid.Column="4" Grid.Row="4" />
-        <Button Margin="1" Grid.Column="1" Grid.Row="5" />
-        <Button Margin="1" Grid.Column="2" Grid.Row="5" />
-        <Button Margin="1" Grid.Column="3" Grid.Row="5" />
-        <Button Margin="1" Grid.Column="4" Grid.Row="5" />
-        <Button Margin="1" Grid.Column="1" Grid.Row="6" />
-        <Button Margin="1" Grid.Column="2" Grid.Row="6" />
-        <Button Margin="1" Grid.Column="3" Grid.Row="6" />
-        <Button Margin="1" Grid.Column="4" Grid.Row="6" />
-        <Button Margin="1" Grid.Column="1" Grid.Row="7" />
-        <Button Margin="1" Grid.Column="2" Grid.Row="7" />
-        <Button Margin="1" Grid.Column="3" Grid.Row="7" />
-        <Button Margin="1" Grid.Column="4" Grid.Row="7" />
-        <Button Margin="1" Grid.Column="1" Grid.Row="8" />
-        <Button Margin="1" Grid.Column="2" Grid.Row="8" />
-        <Button Margin="1" Grid.Column="3" Grid.Row="8" />
-        <Button Margin="1" Grid.Column="4" Grid.Row="8" />
-        <Button Margin="1" Grid.Column="1" Grid.Row="9" />
-        <Button Margin="1" Grid.Column="2" Grid.Row="9" />
-        <Button Margin="1" Grid.Column="3" Grid.Row="9" />
-        <Button Margin="1" Grid.Column="4" Grid.Row="9" />
-        <Button Margin="1" Grid.Column="1" Grid.Row="10"/>
-        <Button Margin="1" Grid.Column="2" Grid.Row="10"/>
-        <Button Margin="1" Grid.Column="3" Grid.Row="10"/>
-        <Button Margin="1" Grid.Column="4" Grid.Row="10"/>
-        <Button Margin="1" Grid.Column="1" Grid.Row="11"/>
-        <Button Margin="1" Grid.Column="2" Grid.Row="11"/>
-        <Button Margin="1" Grid.Column="3" Grid.Row="11"/>
-        <Button Margin="1" Grid.Column="4" Grid.Row="11"/>
-        <Button Margin="1" Grid.Column="1" Grid.Row="12"/>
-        <Button Margin="1" Grid.Column="2" Grid.Row="12"/>
-        <Button Margin="1" Grid.Column="3" Grid.Row="12"/>
-        <Button Margin="1" Grid.Column="4" Grid.Row="12"/>
-        <Button Margin="1" Grid.Column="1" Grid.Row="13"/>
-        <Button Margin="1" Grid.Column="2" Grid.Row="13"/>
-        <Button Margin="1" Grid.Column="3" Grid.Row="13"/>
-        <Button Margin="1" Grid.Column="4" Grid.Row="13"/>
+        <Label
+            Grid.Row="0"
+            Grid.Column="2"
+            HorizontalContentAlignment="Center">
+            Test
+        </Label>
+        <Button
+            Grid.Row="0"
+            Grid.Column="1"
+            HorizontalContentAlignment="Center">
+            -
+        </Button>
+        <Button
+            Grid.Row="0"
+            Grid.Column="3"
+            HorizontalContentAlignment="Center">
+            +
+        </Button>
+        <Label
+            Grid.Row="1"
+            Grid.Column="1"
+            HorizontalContentAlignment="Center">
+            Australian
+        </Label>
+        <Label
+            Grid.Row="1"
+            Grid.Column="2"
+            HorizontalContentAlignment="Center">
+            French
+        </Label>
+        <Label
+            Grid.Row="1"
+            Grid.Column="3"
+            HorizontalContentAlignment="Center">
+            Wimbledon
+        </Label>
+        <Label
+            Grid.Row="1"
+            Grid.Column="4"
+            HorizontalContentAlignment="Center">
+            US
+        </Label>
+        <Label
+            Grid.Row="2"
+            Grid.Column="0"
+            HorizontalContentAlignment="Center">
+            10:00 - 11:00
+        </Label>
+        <Label
+            Grid.Row="3"
+            Grid.Column="0"
+            HorizontalContentAlignment="Center">
+            11:00 - 12:00
+        </Label>
+        <Label
+            Grid.Row="4"
+            Grid.Column="0"
+            HorizontalContentAlignment="Center">
+            12:00 - 13:00
+        </Label>
+        <Label
+            Grid.Row="5"
+            Grid.Column="0"
+            HorizontalContentAlignment="Center">
+            13:00 - 14:00
+        </Label>
+        <Label
+            Grid.Row="6"
+            Grid.Column="0"
+            HorizontalContentAlignment="Center">
+            14:00 - 15:00
+        </Label>
+        <Label
+            Grid.Row="7"
+            Grid.Column="0"
+            HorizontalContentAlignment="Center">
+            15:00 - 16:00
+        </Label>
+        <Label
+            Grid.Row="8"
+            Grid.Column="0"
+            HorizontalContentAlignment="Center">
+            16:00 - 17:00
+        </Label>
+        <Label
+            Grid.Row="9"
+            Grid.Column="0"
+            HorizontalContentAlignment="Center">
+            17:00 - 18:00
+        </Label>
+        <Label
+            Grid.Row="10"
+            Grid.Column="0"
+            HorizontalContentAlignment="Center">
+            18:00 - 19:00
+        </Label>
+        <Label
+            Grid.Row="11"
+            Grid.Column="0"
+            HorizontalContentAlignment="Center">
+            19:00 - 20:00
+        </Label>
+        <Label
+            Grid.Row="12"
+            Grid.Column="0"
+            HorizontalContentAlignment="Center">
+            20:00 - 21:00
+        </Label>
+        <Label
+            Grid.Row="13"
+            Grid.Column="0"
+            HorizontalContentAlignment="Center">
+            21:00 - 22:00
+        </Label>
+        <Button
+            Grid.Row="2"
+            Grid.Column="1"
+            Margin="1" />
+        <Button
+            Grid.Row="2"
+            Grid.Column="2"
+            Margin="1" />
+        <Button
+            Grid.Row="2"
+            Grid.Column="3"
+            Margin="1" />
+        <Button
+            Grid.Row="2"
+            Grid.Column="4"
+            Margin="1" />
+        <Button
+            Grid.Row="3"
+            Grid.Column="1"
+            Margin="1" />
+        <Button
+            Grid.Row="3"
+            Grid.Column="2"
+            Margin="1" />
+        <Button
+            Grid.Row="3"
+            Grid.Column="3"
+            Margin="1" />
+        <Button
+            Grid.Row="3"
+            Grid.Column="4"
+            Margin="1" />
+        <Button
+            Grid.Row="4"
+            Grid.Column="1"
+            Margin="1" />
+        <Button
+            Grid.Row="4"
+            Grid.Column="2"
+            Margin="1" />
+        <Button
+            Grid.Row="4"
+            Grid.Column="3"
+            Margin="1" />
+        <Button
+            Grid.Row="4"
+            Grid.Column="4"
+            Margin="1" />
+        <Button
+            Grid.Row="5"
+            Grid.Column="1"
+            Margin="1" />
+        <Button
+            Grid.Row="5"
+            Grid.Column="2"
+            Margin="1" />
+        <Button
+            Grid.Row="5"
+            Grid.Column="3"
+            Margin="1" />
+        <Button
+            Grid.Row="5"
+            Grid.Column="4"
+            Margin="1" />
+        <Button
+            Grid.Row="6"
+            Grid.Column="1"
+            Margin="1" />
+        <Button
+            Grid.Row="6"
+            Grid.Column="2"
+            Margin="1" />
+        <Button
+            Grid.Row="6"
+            Grid.Column="3"
+            Margin="1" />
+        <Button
+            Grid.Row="6"
+            Grid.Column="4"
+            Margin="1" />
+        <Button
+            Grid.Row="7"
+            Grid.Column="1"
+            Margin="1" />
+        <Button
+            Grid.Row="7"
+            Grid.Column="2"
+            Margin="1" />
+        <Button
+            Grid.Row="7"
+            Grid.Column="3"
+            Margin="1" />
+        <Button
+            Grid.Row="7"
+            Grid.Column="4"
+            Margin="1" />
+        <Button
+            Grid.Row="8"
+            Grid.Column="1"
+            Margin="1" />
+        <Button
+            Grid.Row="8"
+            Grid.Column="2"
+            Margin="1" />
+        <Button
+            Grid.Row="8"
+            Grid.Column="3"
+            Margin="1" />
+        <Button
+            Grid.Row="8"
+            Grid.Column="4"
+            Margin="1" />
+        <Button
+            Grid.Row="9"
+            Grid.Column="1"
+            Margin="1" />
+        <Button
+            Grid.Row="9"
+            Grid.Column="2"
+            Margin="1" />
+        <Button
+            Grid.Row="9"
+            Grid.Column="3"
+            Margin="1" />
+        <Button
+            Grid.Row="9"
+            Grid.Column="4"
+            Margin="1" />
+        <Button
+            Grid.Row="10"
+            Grid.Column="1"
+            Margin="1" />
+        <Button
+            Grid.Row="10"
+            Grid.Column="2"
+            Margin="1" />
+        <Button
+            Grid.Row="10"
+            Grid.Column="3"
+            Margin="1" />
+        <Button
+            Grid.Row="10"
+            Grid.Column="4"
+            Margin="1" />
+        <Button
+            Grid.Row="11"
+            Grid.Column="1"
+            Margin="1" />
+        <Button
+            Grid.Row="11"
+            Grid.Column="2"
+            Margin="1" />
+        <Button
+            Grid.Row="11"
+            Grid.Column="3"
+            Margin="1" />
+        <Button
+            Grid.Row="11"
+            Grid.Column="4"
+            Margin="1" />
+        <Button
+            Grid.Row="12"
+            Grid.Column="1"
+            Margin="1" />
+        <Button
+            Grid.Row="12"
+            Grid.Column="2"
+            Margin="1" />
+        <Button
+            Grid.Row="12"
+            Grid.Column="3"
+            Margin="1" />
+        <Button
+            Grid.Row="12"
+            Grid.Column="4"
+            Margin="1" />
+        <Button
+            Grid.Row="13"
+            Grid.Column="1"
+            Margin="1" />
+        <Button
+            Grid.Row="13"
+            Grid.Column="2"
+            Margin="1" />
+        <Button
+            Grid.Row="13"
+            Grid.Column="3"
+            Margin="1" />
+        <Button
+            Grid.Row="13"
+            Grid.Column="4"
+            Margin="1" />
     </Grid>
 </Window>

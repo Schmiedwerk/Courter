@@ -1,26 +1,47 @@
+from sqlalchemy import Engine, create_engine
+from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.ext.asyncio import AsyncSession, AsyncEngine, create_async_engine
-from sqlalchemy.orm import sessionmaker
 
-from .login import DB_LOGIN
-
-_ENGINE: AsyncEngine = None
-_AsyncSession = None
+from typing import Optional, Union, Type
 
 
-def init_db_access(dbms: str, db_name: str, echo=False) -> None:
-    global _ENGINE, _AsyncSession
-
-    dialects = {
-        'mysql': 'aiomysql',
-        'postgresql': 'asyncpg',
-        'sqlite': 'aiosqlite'
+DB_APIS = {
+    'mysql': {
+        'sync' : 'pymysql',
+        'async': 'aiomysql'
+    },
+    'postgresql': {
+        'sync': 'psycopg',
+        'async': 'asyncpg'
+    },
+    'sqlite': {
+        'sync': 'pysqlite',
+        'async': 'aiosqlite'
     }
-    database_url = f'{dbms}+{dialects[dbms]}://' \
-                   f'{DB_LOGIN["user"]}:{DB_LOGIN["pw"]}@localhost:{DB_LOGIN["port"]}' \
-                   f'/{db_name}'
+}
 
-    _ENGINE = create_async_engine(database_url, echo=echo)
-    _AsyncSession = sessionmaker(bind=_ENGINE, expire_on_commit=False, class_=AsyncSession)
+
+_ENGINE: Union[AsyncEngine, Engine, None] = None
+_Session: Union[Type[AsyncSession], Type[Session], None] = None
+
+
+def init_dbms_access(dbms: str, db_name: str, username: str, port: int, password: Optional[str] = None, *,
+                     use_async: bool = True, echo: bool = False) -> None:
+    global _ENGINE, _Session
+
+    pw = f':{password}' if password is not None else ''
+    dbapi = DB_APIS[dbms]['async'] if use_async else DB_APIS[dbms]['sync']
+
+    database_url = f'{dbms}+{dbapi}://{username}{pw}@localhost:{port}/{db_name}'
+
+    _ENGINE = (create_async_engine(database_url, echo=echo) if use_async
+               else create_engine(database_url, echo=echo))
+
+    _Session = sessionmaker(
+        bind=_ENGINE,
+        expire_on_commit=False,
+        class_=AsyncSession if use_async else Session
+    )
 
 
 async def cleanup_db_access() -> None:
@@ -28,10 +49,14 @@ async def cleanup_db_access() -> None:
         await _ENGINE.dispose()
 
 
-def get_engine() -> AsyncEngine:
+async def get_session() -> AsyncSession:
+    async with _Session() as session:
+        yield session
+
+
+def get_engine() -> Union[AsyncEngine, Engine, None]:
     return _ENGINE
 
 
-async def get_session() -> AsyncSession:
-    async with _AsyncSession() as session:
-        yield session
+def get_session_cls() -> Union[Type[AsyncSession], Type[Session]]:
+    return _Session

@@ -2,6 +2,7 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from jose import jwt, JWTError
+from decouple import config
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -17,11 +18,8 @@ from .exceptions import (
 from ..schemes.user import UserInternal, UserFromToken
 
 
-# TODO: implement better way to store the settings
-
-with open('api/security/settings.txt') as settings:
-    KEY = settings.readline().rstrip()
-    ALGORITHM = settings.readline().rstrip()
+_ALGORITHM = 'HS256'
+_KEY = config('KEY')
 
 _BCRYPT_CONTEXT = CryptContext(schemes=['bcrypt'], deprecated='auto')
 _OAUTH2_BEARER = OAuth2PasswordBearer(tokenUrl='token')
@@ -41,7 +39,7 @@ async def authenticate_user(username: str, password: str,
 
 async def user_from_token(token: str = Depends(_OAUTH2_BEARER)) -> UserFromToken:
     try:
-        payload = jwt.decode(token, KEY, ALGORITHM)
+        payload = jwt.decode(token, _KEY, _ALGORITHM)
         username = payload.get('sub')
         user_id = payload.get('id')
         role = payload.get('role')
@@ -74,7 +72,7 @@ def create_access_token(user: UserFromToken, expires_delta: Optional[timedelta] 
                 else datetime.utcnow() + timedelta(minutes=10))
     }
 
-    return jwt.encode(encode, KEY, ALGORITHM)
+    return jwt.encode(encode, _KEY, _ALGORITHM)
 
 
 def get_password_hash(password: str) -> str:

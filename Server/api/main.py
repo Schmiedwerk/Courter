@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from .routes import login, account, admin, employee, customer, public
-from .db.access import init_db_access, cleanup_db_access
+from .db.access import cleanup_db_access
 from .db.models import create_tables
 
 
@@ -22,7 +22,6 @@ async def welcome():
 
 @app.on_event('startup')
 async def on_startup():
-    init_db_access(dbms='mysql', db_name='courter_api', echo=True)
     await create_tables()
 
 

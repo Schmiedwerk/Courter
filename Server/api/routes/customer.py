@@ -8,7 +8,7 @@ from ..db.access import get_session
 from ..db.models import Customer
 
 from ..administration.bookings import BookingCreator, BookingManager
-from ..security import user_from_token, validate_role
+from ..auth import user_from_token, validate_role
 from ..schemes import UserFromToken, Booking, CustomerBookingIn, BookingOut
 from ..exceptions import ACCESS_DENIED_EXCEPTION
 

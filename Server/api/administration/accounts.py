@@ -6,7 +6,7 @@ from collections.abc import Iterable
 from ..db.models import Admin, Employee, Customer
 from ..db.users import user_exists, role_from_class
 
-from ..security import get_password_hash
+from ..auth import get_password_hash
 from ..exceptions import USERNAME_UNAVAILABLE_EXCEPTION, bad_request, not_found
 from ..schemes import UserIn, UserOut, UserFromToken
 

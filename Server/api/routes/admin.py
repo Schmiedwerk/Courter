@@ -8,7 +8,7 @@ from ..exceptions import conflict, not_found
 from ..schemes import (
     UserIn, UserOut, UserFromToken, CourtIn, CourtOut, TimeslotIn, TimeslotOut
 )
-from ..security import user_from_token, validate_role
+from ..auth import user_from_token, validate_role
 
 
 async def _validate_admin(user: UserFromToken = Depends(user_from_token)) -> UserFromToken:

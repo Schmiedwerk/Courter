@@ -8,7 +8,7 @@ from ..schemes import UserInternal, AccessToken, UserIn, UserOut
 
 from ..db.access import get_session
 from ..db.models import Customer
-from ..security import authenticate_user, create_access_token
+from ..auth import authenticate_user, create_access_token
 from ..administration.accounts import AccountCreator
 
 

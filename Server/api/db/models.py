@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import (
     Column, Integer, String, Date, Time, ForeignKey, CheckConstraint,
     update, delete, select
 )
-from sqlalchemy.orm import relationship, selectinload, noload
+from sqlalchemy.orm import DeclarativeBase, relationship, selectinload, joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from typing import Union, Any, Type
@@ -18,7 +17,9 @@ from .access import get_engine
 USERNAME_MIN_LENGTH = 2
 USERNAME_MAX_LENGTH = 20
 
-_Base = declarative_base()
+
+class Base(DeclarativeBase):
+    pass
 
 
 class _BasicCrud:
@@ -55,7 +56,18 @@ class _BasicCrud:
         await session.commit()
 
 
+def _min_length_constraint(class_name: str) -> CheckConstraint:
+    return CheckConstraint(
+        f'CHAR_LENGTH(username) >= {USERNAME_MIN_LENGTH}',
+        name=f'{class_name}_name_min_length'
+    )
+
+
 class _UserAccess:
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String(USERNAME_MAX_LENGTH), nullable=False, unique=True, index=True)
+    pw_hash = Column(String(256), nullable=False)
+
     @classmethod
     async def create(cls: Union[Type[Admin], Type[Employee], Type[Customer]], session: AsyncSession,
                      username: str, pw_hash: str) -> Union[Admin, Employee, Customer]:
@@ -82,43 +94,24 @@ class _UserAccess:
         return await session.execute(query)
 
 
-def _min_length_constraint(class_name: str) -> CheckConstraint:
-    return CheckConstraint(
-        f'CHAR_LENGTH(username) >= {USERNAME_MIN_LENGTH}',
-        name=f'{class_name}_name_min_length'
-    )
-
-
-class Customer(_Base, _UserAccess, _BasicCrud):
+class Customer(Base, _UserAccess, _BasicCrud):
     __tablename__ = 'customers'
-    __table_args__ = (_min_length_constraint('customer'), )
-
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(USERNAME_MAX_LENGTH), nullable=False, unique=True, index=True)
-    pw_hash = Column(String(256), nullable=False)
+    __table_args__ = (_min_length_constraint('customer'),)
 
     bookings = relationship('Booking', back_populates='customer', lazy='selectin')
 
 
-class Admin(_Base, _UserAccess, _BasicCrud):
+class Admin(Base, _UserAccess, _BasicCrud):
+    __table_args__ = (_min_length_constraint('admin'),)
     __tablename__ = 'admins'
-    __table_args__ = (_min_length_constraint('admin'), )
-
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(USERNAME_MAX_LENGTH), nullable=False, unique=True, index=True)
-    pw_hash = Column(String(256), nullable=False)
 
 
-class Employee(_Base, _UserAccess, _BasicCrud):
+class Employee(Base, _UserAccess, _BasicCrud):
+    __table_args__ = (_min_length_constraint('employee'),)
     __tablename__ = 'employees'
-    __table_args__ = (_min_length_constraint('employee'), )
-
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(USERNAME_MAX_LENGTH), nullable=False, unique=True, index=True)
-    pw_hash = Column(String(256), nullable=False)
 
 
-class Booking(_Base, _BasicCrud):
+class Booking(Base, _BasicCrud):
     __tablename__ = 'bookings'
     __table_args__ = (
         CheckConstraint(f'guest_name IS NULL '
@@ -173,7 +166,7 @@ class Booking(_Base, _BasicCrud):
         return await session.scalars(query)
 
 
-class Timeslot(_Base, _BasicCrud):
+class Timeslot(Base, _BasicCrud):
     __tablename__ = 'timeslots'
     __table_args__ = (
         CheckConstraint('TIMEDIFF(end, start) > 0',
@@ -200,7 +193,7 @@ class Timeslot(_Base, _BasicCrud):
         return await session.execute(query)
 
 
-class Court(_Base, _BasicCrud):
+class Court(Base, _BasicCrud):
     NAME_MIN_LENGTH = 2
     NAME_MAX_LENGTH = 25
     SURFACE_MIN_LENGTH = 1
@@ -245,7 +238,7 @@ class Court(_Base, _BasicCrud):
         return await session.execute(query)
 
 
-class Closing(_Base, _BasicCrud):
+class Closing(Base, _BasicCrud):
     __tablename__ = 'closings'
 
     id = Column(Integer, primary_key=True, index=True)
@@ -286,4 +279,4 @@ class Closing(_Base, _BasicCrud):
 
 async def create_tables():
     async with get_engine().begin() as conn:
-        await conn.run_sync(_Base.metadata.create_all)
+        await conn.run_sync(Base.metadata.create_all)

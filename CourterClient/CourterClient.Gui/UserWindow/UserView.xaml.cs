@@ -29,12 +29,6 @@ namespace CourterClient.Gui.UserWindow
             this.Close();
         }
 
-        private void Image_MouseUp_1(object sender, MouseButtonEventArgs e)
-        {
-            var cal = new CalendarView();
-            cal.ShowDialog();
-        }
-
         private void Border_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)

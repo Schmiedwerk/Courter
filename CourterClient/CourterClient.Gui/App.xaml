@@ -2,9 +2,8 @@
     x:Class="CourterClient.Gui.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:templates="clr-namespace:CourterClient.Gui.Gui.UserWindow"
     xmlns:local="clr-namespace:CourterClient.Gui"
-    StartupUri="LoginWindow/LoginView.xaml">
+    xmlns:templates="clr-namespace:CourterClient.Gui.Gui.UserWindow">
     <Application.Resources>
 
         <Style x:Key="titleText" TargetType="TextBlock">
@@ -125,6 +124,39 @@
             </Style.Triggers>
         </Style>
 
+        <Style x:Key="calAcceptButton" TargetType="Button">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Width" Value="150" />
+            <Setter Property="Background" Value="#6f916f" />
+            <Setter Property="Foreground" Value="#fdfefe" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="#6f916f"
+                            BorderThickness="1"
+                            CornerRadius="15">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#6f916f" />
+                    <Setter Property="Background" Value="White" />
+                    <Setter Property="Foreground" Value="#6f916f" />
+                </Trigger>
+                <Trigger Property="IsMouseCaptured" Value="True">
+                    <Setter Property="Background" Value="#6f916f" />
+                    <Setter Property="Background" Value="White" />
+                    <Setter Property="Foreground" Value="#6f916f" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
         <Style x:Key="imgClose" TargetType="Image">
             <Setter Property="Width" Value="30" />
             <Setter Property="Height" Value="30" />
@@ -142,40 +174,92 @@
             </Style.Triggers>
         </Style>
 
+        <Style x:Key="Calendar" TargetType="Image">
+            <Setter Property="Width" Value="30" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="RenderTransform">
+                        <Setter.Value>
+                            <ScaleTransform ScaleX="1.1" ScaleY="1.1" />
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
         <DataTemplate x:Key="TimeSlotTemplate">
-            <Border Background="White" CornerRadius="2 2 2 2" Width="120" Height="30">
+            <Border
+                Width="120"
+                Height="30"
+                Background="White"
+                CornerRadius="2 2 2 2">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="60"/>
-                        <ColumnDefinition Width="10"/>
-                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="60" />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="{Binding Path=Start}" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#878787"
-                               Style="{StaticResource normalText}"/>
-                    <TextBlock Text="{Binding Path=Hyphen}" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#878787"
-                               Style="{StaticResource normalText}"/>
-                    <TextBlock Text="{Binding Path=End}" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#878787"
-                               Style="{StaticResource normalText}"/>
+                    <TextBlock
+                        Grid.Column="0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Foreground="#878787"
+                        Style="{StaticResource normalText}"
+                        Text="{Binding Path=Start}" />
+                    <TextBlock
+                        Grid.Column="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Foreground="#878787"
+                        Style="{StaticResource normalText}"
+                        Text="{Binding Path=Hyphen}" />
+                    <TextBlock
+                        Grid.Column="2"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Foreground="#878787"
+                        Style="{StaticResource normalText}"
+                        Text="{Binding Path=End}" />
                 </Grid>
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="BookingButton" DataType="{x:Type templates:SlotButton}">
-            <templates:SlotButton/>
+            <templates:SlotButton />
         </DataTemplate>
 
         <DataTemplate x:Key="CourtSlotsTemplate">
-            <Border Background="White" CornerRadius="2 2 2 2" Width="150" Height="auto">
+            <Border
+                Width="150"
+                Height="auto"
+                Background="White"
+                CornerRadius="2 2 2 2">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="30" />
+                        <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
-                    <TextBlock Text="{Binding Path=CourtName}" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#878787"
-                               Style="{StaticResource normalText}"/>
-                    <ListBox x:Name="SlotListBox" Grid.Row="1" ItemsSource="{Binding Path=SlotList}" ItemTemplate="{StaticResource BookingButton}"
-                             HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                             BorderThickness="0"/>
+                    <TextBlock
+                        Grid.Row="0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Foreground="#878787"
+                        IsEnabled="False"
+                        Style="{StaticResource normalText}"
+                        Text="{Binding Path=CourtName}" />
+                    <ListBox
+                        x:Name="SlotListBox"
+                        Grid.Row="1"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
+                        BorderThickness="0"
+                        ItemTemplate="{StaticResource BookingButton}"
+                        ItemsSource="{Binding Path=SlotList}" />
                 </Grid>
             </Border>
         </DataTemplate>

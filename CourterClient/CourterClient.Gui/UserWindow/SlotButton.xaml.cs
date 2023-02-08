@@ -19,13 +19,15 @@ namespace CourterClient.Gui.Gui.UserWindow
 
         public void SetButtonState()
         {
+            var green = (SolidColorBrush)new BrushConverter().ConvertFromString("#6f916f");
+            var red = (SolidColorBrush)new BrushConverter().ConvertFromString("#EE5C42");
             if (IsBooked == true)
             {
-                this.StateButton.Background = Brushes.Firebrick;
+                this.StateButton.Background = red;
             }
             else
             {
-                this.StateButton.Background = Brushes.ForestGreen;
+                this.StateButton.Background = green;
             }
         }
 
@@ -37,7 +39,7 @@ namespace CourterClient.Gui.Gui.UserWindow
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            this.StateButton.Background = Brushes.Firebrick;
+            SetBooked(true);
         }
     }
 }

@@ -6,8 +6,6 @@ using System.Collections.ObjectModel;
 
 namespace CourterClient.Gui.Gui.UserWindow
 {
-    public delegate void TransferDate(DateOnly date);
-
     class UserViewModel : ViewModelBase
     {
         public TransferDate delegateTransfer;

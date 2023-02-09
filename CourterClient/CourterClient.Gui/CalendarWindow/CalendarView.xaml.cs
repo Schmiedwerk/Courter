@@ -1,26 +1,14 @@
-﻿using CourterClient.Gui.Gui;
-using CourterClient.Gui.Gui.UserWindow;
-using CourterClient.Gui.UserWindow;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace CourterClient.Gui.CalendarWindow
 {
     public partial class CalendarView : Window
     {
         TransferDate transfer;
+
         public CalendarView(TransferDate del)
         {
             InitializeComponent();
@@ -46,6 +34,15 @@ namespace CourterClient.Gui.CalendarWindow
             transfer.Invoke(DateOnly.FromDateTime(selected));
             
             this.Close();
+        }
+
+        private void CalendarWidget_GotMouseCapture(object sender, MouseEventArgs e)
+        {
+            UIElement? originalElement = e.OriginalSource as UIElement;
+            if (originalElement is CalendarDayButton || originalElement is CalendarItem)
+            {
+                originalElement?.ReleaseMouseCapture();
+            }
         }
     }
 }

@@ -1,8 +1,8 @@
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session, sessionmaker
-from sqlalchemy.ext.asyncio import AsyncSession, AsyncEngine, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession, AsyncEngine, create_async_engine, async_sessionmaker
 
-from typing import Optional, Union, Type
+from typing import Union, Type, Optional
 
 
 DB_APIS = {
@@ -25,23 +25,25 @@ _ENGINE: Union[AsyncEngine, Engine, None] = None
 _Session: Union[Type[AsyncSession], Type[Session], None] = None
 
 
-def init_dbms_access(dbms: str, db_name: str, username: str, password: str, host: str, port: int, *,
+def init_dbms_access(dbms: str, database: str, username: Optional[str] = None, password: Optional[str] = None,
+                     host: Optional[str] = None, port: Optional[int] = None, *,
                      use_async: bool = True, echo: bool = False) -> None:
     global _ENGINE, _Session
 
-    pw = f':{password}' if password is not None else ''
     dbapi = DB_APIS[dbms]['async'] if use_async else DB_APIS[dbms]['sync']
+    database_url = f'{dbms}+{dbapi}://'
 
-    database_url = f'{dbms}+{dbapi}://{username}{pw}@{host}:{port}/{db_name}'
+    if dbms == 'sqlite':
+        database_url = f'/{database}'
+    else:
+        pw = f':{password}' if password is not None else ''
+        database_url += f'{username}{pw}@{host}:{port}/{database}'
 
     _ENGINE = (create_async_engine(database_url, echo=echo) if use_async
                else create_engine(database_url, echo=echo))
 
-    _Session = sessionmaker(
-        bind=_ENGINE,
-        expire_on_commit=False,
-        class_=AsyncSession if use_async else Session
-    )
+    _Session = (async_sessionmaker(bind=_ENGINE, expire_on_commit=False) if use_async else
+                sessionmaker(bind=_ENGINE))
 
 
 async def cleanup_db_access() -> None:

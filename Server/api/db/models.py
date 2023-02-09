@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from sqlalchemy import (
-    Integer, String, Time, ForeignKey, CheckConstraint, select
-)
+from sqlalchemy import String, ForeignKey, CheckConstraint, select
+
 from sqlalchemy.orm import (
     DeclarativeBase, Mapped, mapped_column, relationship, selectinload
 )

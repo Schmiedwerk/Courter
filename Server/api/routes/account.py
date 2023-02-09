@@ -7,7 +7,7 @@ from ..db.access import get_session
 from ..db.models import Admin, Employee, Customer
 
 from ..administration.accounts import make_account_manager
-from ..auth import user_from_token
+from ..auth.token import user_from_token
 from ..schemes.user import (
     UserOut, UserFromToken, USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH,
     PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH

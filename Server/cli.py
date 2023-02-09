@@ -58,7 +58,7 @@ args = parser.parse_args()
 def init_dbms():
     init_dbms_access(
         dbms=config('DBMS'),
-        db_name=config('DB'),
+        database=config('DB'),
         username=args.username,
         password=args.pw,
         host=args.dbms_host,

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace CourterClient.Gui
 {
+    public delegate void TransferDate(DateOnly date);
     public abstract class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;

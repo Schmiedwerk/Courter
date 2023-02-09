@@ -76,9 +76,16 @@ namespace CourterClient.Gui.LoginWindow
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            var UserWin = new UserView();
-            this.Close();
-            UserWin.ShowDialog();
+            if (textInputBox.Text == "mustermann" && pwInputBox.Password == "test123")
+            {
+                var UserWin = new UserView();
+                this.Close();
+                UserWin.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("Benutzername oder Passwort sind falsch. Erneut versuchen", "Login fehlgeschlagen.");
+            }
         }
     }
 }

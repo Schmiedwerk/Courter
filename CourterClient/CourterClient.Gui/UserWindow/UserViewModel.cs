@@ -1,19 +1,22 @@
-﻿using System;
+﻿using CourterClient.Gui.CalendarWindow;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Reflection.Metadata.BlobBuilder;
 
 namespace CourterClient.Gui.Gui.UserWindow
 {
+    public delegate void TransferDate(DateOnly date);
+
     class UserViewModel : ViewModelBase
     {
+        public TransferDate delegateTransfer;
         private ObservableCollection<TimeSlot> timeSlots = new ObservableCollection<TimeSlot>();
         private ObservableCollection<CourtDefinition> courts = new ObservableCollection<CourtDefinition>();
         public List<CourtDefinition> courtList = new List<CourtDefinition>();
         private int Slots = 0;
+
+        public DateManager DateManager { get; set; }    
 
         public ObservableCollection<TimeSlot> TimeSlots
         {
@@ -43,6 +46,9 @@ namespace CourterClient.Gui.Gui.UserWindow
 
         public UserViewModel()
         {
+            this.DateManager = new DateManager();
+            this.delegateTransfer += new TransferDate(SetCurrentDate);
+
             CreateTimeTable(10, 22);
             AddCourt("Wimbledon", Slots);
             AddCourt("New York", Slots);
@@ -50,6 +56,23 @@ namespace CourterClient.Gui.Gui.UserWindow
             AddCourt("Paris", Slots);
 
             CreateCourtTable();
+
+
+            SetNextDay = new DelegateCommand((o) =>
+            {
+                DateManager.SetDate(DateManager.Next);
+            });
+
+            SetPreviousDay = new DelegateCommand((o) =>
+            {
+                DateManager.SetDate(DateManager.Previous);
+            });
+
+            OpenCalendar = new DelegateCommand((o) =>
+            {
+                var cal = new CalendarView(delegateTransfer);
+                cal.ShowDialog();
+            });
         }
 
 
@@ -85,5 +108,16 @@ namespace CourterClient.Gui.Gui.UserWindow
                 }
             }
         }
+
+        public void SetCurrentDate(DateOnly date)
+        {
+            this.DateManager.SetDate(date);
+        }
+
+        public DelegateCommand SetNextDay { get; set; }
+
+        public DelegateCommand SetPreviousDay { get; set; }
+
+        public DelegateCommand OpenCalendar { get; set; }
     }
 }

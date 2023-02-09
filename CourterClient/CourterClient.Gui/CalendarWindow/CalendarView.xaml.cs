@@ -1,4 +1,8 @@
-﻿using System;
+﻿using CourterClient.Gui.Gui;
+using CourterClient.Gui.Gui.UserWindow;
+using CourterClient.Gui.UserWindow;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,15 +18,16 @@ using System.Windows.Shapes;
 
 namespace CourterClient.Gui.CalendarWindow
 {
-    /// <summary>
-    /// Interaction logic for CalendarView.xaml
-    /// </summary>
     public partial class CalendarView : Window
     {
-        public CalendarView()
+        TransferDate transfer;
+        public CalendarView(TransferDate del)
         {
             InitializeComponent();
+            DataContext= this;
+            transfer = del;
         }
+
 
         private void Image_MouseUp(object sender, MouseButtonEventArgs e)
         {
@@ -33,6 +38,14 @@ namespace CourterClient.Gui.CalendarWindow
         {
             if (e.ChangedButton == MouseButton.Left)
                 this.DragMove();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var selected = CalendarWidget.SelectedDate ?? DateTime.Today;
+            transfer.Invoke(DateOnly.FromDateTime(selected));
+            
+            this.Close();
         }
     }
 }

@@ -23,10 +23,12 @@
                     <RowDefinition Height="20"/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Content="Gestern" Style="{StaticResource mainbutton}" Grid.Row="0" Margin="5"/>
-                    <TextBlock Style="{StaticResource normalText}" Foreground="#878787" Width="200" Margin="5" Text="Heute" VerticalAlignment="Center"/>
-                    <Image Style="{StaticResource imgClose}" Source="/Logos/Kalender.png" MouseUp="Image_MouseUp_1"/>
-                    <Button Content="Morgen" Style="{StaticResource mainbutton}" Grid.Row="0" Margin="5"/>
+                    <Button Content="{Binding DateManager.PreviousToString}" Style="{StaticResource mainbutton}" Grid.Row="0" Margin="5" Command="{Binding SetPreviousDay}"/>
+                    <TextBlock Style="{StaticResource normalText}" Foreground="#878787" Width="200" Margin="5" Text="{Binding DateManager.CurrentToString}" VerticalAlignment="Center"/>
+                    <Button Background="Transparent" Height="auto" Margin="5" Width="auto" BorderThickness="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Command="{Binding OpenCalendar}">
+                        <Image Style="{StaticResource Calendar}" Source="/Logos/Kalender.png"/>
+                    </Button>
+                    <Button Content="{Binding DateManager.NextToString}" Style="{StaticResource mainbutton}" Grid.Row="0" Margin="5" Command="{Binding SetNextDay}"/>
                 </StackPanel>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top">
                     <Grid>

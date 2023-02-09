@@ -4,6 +4,7 @@ import uvicorn
 
 from api.db.access import init_dbms_access
 
+DBMS_DEFAULT_HOST = 'localhost'
 DBMS_DEFAULT_PORT = 3306
 SERVER_DEFAULT_PORT = 8000
 
@@ -12,12 +13,18 @@ parser = ArgumentParser(description='Runs the Courter API server.')
 parser.add_argument(
     '--setup',
     action='store_true',
-    help='Run the servers setup script'
+    help="Run the server's setup script"
 )
 
 dbms_args = parser.add_argument_group('DBMS configuration')
 dbms_args.add_argument('username', help='DBMS username')
 dbms_args.add_argument('--pw', metavar='', help='DBMS password')
+dbms_args.add_argument(
+    '--dbms-host',
+    metavar='',
+    default=DBMS_DEFAULT_HOST,
+    help=f'Host of the DBMS server (default: {DBMS_DEFAULT_HOST})'
+)
 dbms_args.add_argument(
     '--dbms-port',
     type=int,
@@ -53,8 +60,9 @@ def init_dbms():
         dbms=config('DBMS'),
         db_name=config('DB'),
         username=args.username,
-        port=args.dbms_port,
         password=args.pw,
+        host=args.dbms_host,
+        port=args.dbms_port,
         use_async=not args.setup,
         echo=args.echo
     )
@@ -73,5 +81,5 @@ else:
     init_dbms()
 
 
-if __name__ == '__main__':
+if __name__ == '__main__' and not args.setup:
     uvicorn.run('api.main:app', port=args.api_port, reload=args.reload)

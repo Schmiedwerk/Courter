@@ -4,27 +4,23 @@ import datetime
 
 from ..db.models import USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH
 
-_TODAY = datetime.datetime.now().date()
-_BOOKING_SPAN = datetime.timedelta(days=60)
+_STARTUP_DAY = datetime.datetime.now().date()
 
 
-class Booking(BaseModel):
+class BookingBase(BaseModel):
     date: datetime.date
     timeslot_id: int
     court_id: int
 
+    class Config:
+        orm_mode = True
 
-class CustomerBookingIn(Booking):
-    @validator('date')
-    def check_date(cls, date: datetime.date) -> datetime.date:
-        if not (_TODAY <= date <= _TODAY + _BOOKING_SPAN):
-            raise ValueError('invalid booking date')
-        return date
 
+class CustomerBookingIn(BookingBase):
     class Config:
         schema_extra = {
             'example': {
-                'date': _TODAY + datetime.timedelta(days=5),
+                'date': _STARTUP_DAY + datetime.timedelta(days=5),
                 'timeslot_id': 3,
                 'court_id': 5,
             }
@@ -37,7 +33,7 @@ class GuestBookingIn(CustomerBookingIn):
     class Config:
         schema_extra = {
             'example': {
-                'date': _TODAY + datetime.timedelta(days=2),
+                'date': _STARTUP_DAY + datetime.timedelta(days=2),
                 'timeslot_id': 5,
                 'court_id': 3,
                 'guest_name': 'v.Rossum'
@@ -45,7 +41,7 @@ class GuestBookingIn(CustomerBookingIn):
         }
 
 
-class BookingOut(Booking):
+class BookingOut(BookingBase):
     id: int
     customer_id: Optional[int]
     guest_name: Optional[str]
@@ -53,7 +49,7 @@ class BookingOut(Booking):
     class Config:
         schema_extra = {
             'example': {
-                'date': _TODAY + datetime.timedelta(days=10),
+                'date': _STARTUP_DAY + datetime.timedelta(days=10),
                 'timeslot_id': 2,
                 'court_id': 1,
                 'guest_name': 'kThompson',

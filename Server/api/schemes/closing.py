@@ -43,3 +43,5 @@ class ClosingOut(_ClosingBase):
                 'id': 23
             }
         }
+
+        orm_mode = True

@@ -10,13 +10,13 @@ from ..schemes import CourtOut, TimeslotOut
 ROUTER = APIRouter(prefix='/public', tags=['public'])
 
 
-@ROUTER.get('/courts')
-async def get_courts(session: AsyncSession = Depends(get_session)) -> list[CourtOut]:
+@ROUTER.get('/courts', response_model=list[CourtOut])
+async def get_courts(session: AsyncSession = Depends(get_session)) -> list[Court]:
     courts = await Court.get_all(session)
-    return [CourtOut(id=court.id, name=court.name, surface=court.surface) for court in courts]
+    return list(courts)
 
 
-@ROUTER.get('/timeslots')
-async def get_timeslots(session: AsyncSession = Depends(get_session)) -> list[TimeslotOut]:
+@ROUTER.get('/timeslots', response_model=list[TimeslotOut])
+async def get_timeslots(session: AsyncSession = Depends(get_session)) -> list[Timeslot]:
     timeslots = await Timeslot.get_all(session)
-    return [TimeslotOut(id=timeslot.id, start=timeslot.start, end=timeslot.end) for timeslot in timeslots]
+    return list(timeslots)

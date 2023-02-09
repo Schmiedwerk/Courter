@@ -1,75 +1,72 @@
+from __future__ import annotations
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from typing import Union, Type
-from collections.abc import Iterable
 
+from .users import role_from_class, user_exists
 from ..db.models import Admin, Employee, Customer
-from ..db.users import user_exists, role_from_class
-
 from ..auth import get_password_hash
 from ..exceptions import USERNAME_UNAVAILABLE_EXCEPTION, bad_request, not_found
-from ..schemes import UserIn, UserOut, UserFromToken
+from ..schemes import UserIn, UserFromToken
 
 
 def make_account_manager(user: Union[UserFromToken, UserIn, int],
-                         cls: Union[Type[Admin], Type[Employee], Type[Customer]] = None):
+                         cls: Union[Type[Admin], Type[Employee], Type[Customer]] = None) -> _AccountManager:
     if cls is None:
         if user.role == role_from_class(Admin):
             return _AdminManager(user)
         if user.role == role_from_class(Employee):
-            return AccountManager(Employee, user)
+            return _AccountManager(Employee, user)
         if user.role == role_from_class(Customer):
-            return AccountManager(Customer, user)
+            return _AccountManager(Customer, user)
 
     if cls is Admin:
         return _AdminManager(user)
 
-    return AccountManager(cls, user)
+    return _AccountManager(cls, user)
 
 
-class AccountCreator:
-    def __init__(self, cls: Union[Type[Admin], Type[Employee], Type[Customer]], user: UserIn) -> None:
-        self.cls = cls
-        self.user = user
+async def create_account(session: AsyncSession, cls: Union[Type[Admin], Type[Employee], Type[Customer]],
+                         user: UserIn) -> Union[Admin, Employee, Customer]:
+    username_unavailable = await user_exists(session, user.username)
+    if username_unavailable:
+        raise USERNAME_UNAVAILABLE_EXCEPTION
 
-    async def create(self, session: AsyncSession) -> UserOut:
-        username_unavailable = await user_exists(session, self.user.username)
-        if username_unavailable:
-            raise USERNAME_UNAVAILABLE_EXCEPTION
+    password_hash = get_password_hash(user.password)
+    new_user = cls(user.username, password_hash)
+    await new_user.save(session)
 
-        pw_hash = get_password_hash(self.user.password)
-        new_user = await self.cls.create(session, self.user.username, pw_hash)
-
-        return AccountManager.user_out_from_user(new_user)
+    return new_user
 
 
-class AccountManager:
+class _AccountManager:
     def __init__(self, cls: Union[Type[Admin], Type[Employee], Type[Customer]],
                  user: Union[UserFromToken, int]) -> None:
         self.cls = cls
         self.user = user
         self.user_db: Union[Admin, Employee, Customer, None] = None
 
-    async def get(self, session: AsyncSession) -> UserOut:
+    async def get(self, session: AsyncSession) -> Union[Admin, Employee, Customer]:
         await self._ensure_fetched(session)
-        return AccountManager.user_out_from_user(self.user_db)
+        return self.user_db
 
-    async def update_username(self, session: AsyncSession, new_username: str) -> UserOut:
+    async def update_username(self, session: AsyncSession, new_username: str) -> Union[Admin, Employee, Customer]:
         await self._ensure_fetched(session)
-        await self.cls.update(session, self.user_db.id, username=new_username)
-        await self._refetch(session)
-        return AccountManager.user_out_from_user(self.user_db)
+        self.user_db.username = new_username
+        await self.user_db.save()
+        return self.user_db
 
-    async def update_password(self, session: AsyncSession, new_password: str) -> UserOut:
+    async def update_password(self, session: AsyncSession, new_password: str) -> Union[Admin, Employee, Customer]:
         await self._ensure_fetched(session)
         new_pw_hash = get_password_hash(new_password)
-        await self.cls.update(session, self.user_db.id, pw_hash=new_pw_hash)
-        await self._refetch(session)
-        return AccountManager.user_out_from_user(self.user_db)
+        self.user_db.password_hash = new_pw_hash
+        await self.user_db.save(session)
+        return self.user_db
 
     async def delete(self, session: AsyncSession) -> None:
         await self._ensure_fetched(session)
-        await self.cls.delete(session, self.user)
+        await self.user_db.delete(session)
         self.user_db = None
 
     async def _ensure_fetched(self, session: AsyncSession) -> None:
@@ -84,20 +81,10 @@ class AccountManager:
         self.user_db = None
         await self._ensure_fetched(session)
 
-    @staticmethod
-    def user_out_from_user(user: Union[Admin, Employee, Customer]) -> UserOut:
-        return UserOut(id=user.id, username=user.username)
 
-    @staticmethod
-    async def get_all(cls: Union[Type[Admin], Type[Employee], Type[Customer]],
-                      session: AsyncSession) -> Iterable[UserOut]:
-        users = await cls.get_all(session)
-        return (UserOut(id=user.id, username=user.username) for user in users)
-
-
-class _AdminManager(AccountManager):
+class _AdminManager(_AccountManager):
     def __init__(self, admin: Union[UserIn, UserFromToken, int]):
-        AccountManager.__init__(self, Admin, admin)
+        _AccountManager.__init__(self, Admin, admin)
 
     async def delete(self, session: AsyncSession) -> None:
         # make sure this is not the only admin
@@ -106,4 +93,4 @@ class _AdminManager(AccountManager):
         if count < 2:
             raise bad_request('deletion of only admin disallowed')
 
-        await AccountManager.delete(self, session)
+        await _AccountManager.delete(self, session)

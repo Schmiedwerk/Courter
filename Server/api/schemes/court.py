@@ -27,3 +27,5 @@ class CourtOut(CourtIn):
                 'id': 5
             }
         }
+
+        orm_mode = True

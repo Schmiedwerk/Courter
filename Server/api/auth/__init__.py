@@ -10,8 +10,8 @@ from typing import Type, Optional, Union
 from datetime import datetime, timedelta
 
 from ..db.models import Admin, Employee, Customer
-from ..db.users import get_user, role_from_class
 
+from ..administration.users import get_user, role_from_class
 from .exceptions import (
     INCOMPLETE_CREDENTIALS_EXCEPTION, INVALID_CREDENTIALS_EXCEPTION, ROLE_EXCEPTION, INVALID_TOKEN_EXCEPTION
 )

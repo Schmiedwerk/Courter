@@ -66,8 +66,8 @@ def _create_admin():
             break
         print("The passwords don't match. Please retry.")
 
-    hashed_password = get_password_hash(password)
-    admin = Admin(username=admin_name, pw_hash=hashed_password)
+    password_hash = get_password_hash(password)
+    admin = Admin(admin_name, password_hash)
 
     with get_session_cls()() as session:
         session.add(admin)

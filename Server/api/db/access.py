@@ -25,14 +25,14 @@ _ENGINE: Union[AsyncEngine, Engine, None] = None
 _Session: Union[Type[AsyncSession], Type[Session], None] = None
 
 
-def init_dbms_access(dbms: str, db_name: str, username: str, port: int, password: Optional[str] = None, *,
+def init_dbms_access(dbms: str, db_name: str, username: str, password: str, host: str, port: int, *,
                      use_async: bool = True, echo: bool = False) -> None:
     global _ENGINE, _Session
 
     pw = f':{password}' if password is not None else ''
     dbapi = DB_APIS[dbms]['async'] if use_async else DB_APIS[dbms]['sync']
 
-    database_url = f'{dbms}+{dbapi}://{username}{pw}@localhost:{port}/{db_name}'
+    database_url = f'{dbms}+{dbapi}://{username}{pw}@{host}:{port}/{db_name}'
 
     _ENGINE = (create_async_engine(database_url, echo=echo) if use_async
                else create_engine(database_url, echo=echo))

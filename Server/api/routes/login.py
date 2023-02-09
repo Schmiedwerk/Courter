@@ -4,12 +4,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from datetime import timedelta
 
-from ..schemes import UserInternal, AccessToken, UserIn, UserOut
-
 from ..db.access import get_session
 from ..db.models import Customer
 from ..auth import authenticate_user, create_access_token
-from ..administration.accounts import AccountCreator
+from ..administration.accounts import create_account
+from ..schemes import UserInternal, AccessToken, UserIn, UserOut
 
 
 ROUTER = APIRouter(tags=['login'])
@@ -25,7 +24,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return AccessToken(access_token=token, token_type='bearer')
 
 
-@ROUTER.post('/signup')
-async def create_account(user: UserIn, session: AsyncSession = Depends(get_session)) -> UserOut:
+@ROUTER.post('/signup', response_model=UserOut)
+async def sign_up(user: UserIn, session: AsyncSession = Depends(get_session)) -> Customer:
     # only customers can create an account this way
-    return await AccountCreator(Customer, user).create(session)
+    return await create_account(session, Customer, user)

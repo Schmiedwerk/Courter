@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import datetime
 
 from ..db.access import get_session
-from ..db.models import Employee
+from ..db.models import Employee, Booking, Closing
 
 from ..administration.bookings import BookingCreator, BookingManager
 from ..administration.closings import ClosingCreator, ClosingManager
@@ -23,14 +23,15 @@ ROUTER = APIRouter(
 )
 
 
-@ROUTER.get('/bookings/{date}')
+@ROUTER.get('/bookings/{date}', response_model=list[BookingOut])
 async def get_bookings_for_date(date: datetime.date,
-                                    session: AsyncSession = Depends(get_session)) -> list[BookingOut]:
-    return list(await BookingManager.all_by_date(session, date))
+                                session: AsyncSession = Depends(get_session)) -> list[Booking]:
+    bookings = await Booking.get_filtered(session, date=date)
+    return  list(bookings)
 
 
-@ROUTER.post('/bookings', status_code=status.HTTP_201_CREATED)
-async def add_guest_booking(booking: GuestBookingIn, session: AsyncSession = Depends(get_session)) -> BookingOut:
+@ROUTER.post('/bookings', status_code=status.HTTP_201_CREATED, response_model=BookingOut)
+async def add_guest_booking(booking: GuestBookingIn, session: AsyncSession = Depends(get_session)) -> Booking:
     return await BookingCreator(booking).create(session)
 
 
@@ -44,14 +45,15 @@ async def delete_guest_booking(booking_id: int, session: AsyncSession = Depends(
     await manager.delete(session)
 
 
-@ROUTER.get('/closings/{date}')
+@ROUTER.get('/closings/{date}', response_model=list[ClosingOut])
 async def get_closings_for_date(date: datetime.date,
-                                    session: AsyncSession = Depends(get_session)) -> list[ClosingOut]:
-    return list(await ClosingManager.all_by_date(session, date))
+                                session: AsyncSession = Depends(get_session)) -> list[Closing]:
+    closings = await Closing.get_filtered(session, date=date)
+    return list(closings)
 
 
-@ROUTER.post('/closings', status_code=status.HTTP_201_CREATED)
-async def add_closing(closing: ClosingIn, session: AsyncSession = Depends(get_session)) -> ClosingOut:
+@ROUTER.post('/closings', status_code=status.HTTP_201_CREATED, response_model=ClosingOut)
+async def add_closing(closing: ClosingIn, session: AsyncSession = Depends(get_session)) -> Closing:
     return await ClosingCreator(closing).create(session)
 
 

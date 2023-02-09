@@ -33,6 +33,8 @@ class UserOut(_UserBase):
             }
         }
 
+        orm_mode = True
+
 
 class UserFromToken(UserOut):
     role: str

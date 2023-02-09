@@ -26,3 +26,5 @@ class TimeslotOut(TimeslotIn):
                 'id': 8
             }
         }
+
+        orm_mode = True

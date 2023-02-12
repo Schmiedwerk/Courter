@@ -3,7 +3,7 @@ from __future__ import annotations
 from sqlalchemy import String, ForeignKey, CheckConstraint, select
 
 from sqlalchemy.orm import (
-    DeclarativeBase, Mapped, mapped_column, relationship, selectinload
+    MappedAsDataclass, DeclarativeBase, Mapped, mapped_column, relationship, selectinload
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,12 +13,11 @@ import datetime
 
 from .access import get_engine
 
+from ..schemes.user import USERNAME_MAX_LENGTH
+from ..schemes.court import NAME_MAX_LENGTH, SURFACE_MAX_LENGTH
 
-USERNAME_MIN_LENGTH = 2
-USERNAME_MAX_LENGTH = 16
 
-
-class Base(DeclarativeBase):
+class Base(MappedAsDataclass, DeclarativeBase):
     async def save(self, session: AsyncSession) -> None:
         session.add(self)
         await session.commit()
@@ -28,15 +27,8 @@ class Base(DeclarativeBase):
         await session.commit()
 
 
-def _min_length_constraint(class_name: str) -> CheckConstraint:
-    return CheckConstraint(
-        f'CHAR_LENGTH(username) >= {USERNAME_MIN_LENGTH}',
-        name=f'{class_name}_name_min_length'
-    )
-
-
 class _User:
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(init=False, primary_key=True, index=True)
     username: Mapped[str] = mapped_column(String(USERNAME_MAX_LENGTH), unique=True, index=True)
     password_hash: Mapped[str] = mapped_column(String(256))
 
@@ -66,7 +58,6 @@ class _User:
 
 
 class Admin(_User, Base):
-    __table_args__ = (_min_length_constraint('admin'),)
     __tablename__ = 'admins'
 
     @staticmethod
@@ -79,7 +70,6 @@ class Admin(_User, Base):
 
 
 class Employee(_User, Base):
-    __table_args__ = (_min_length_constraint('employee'),)
     __tablename__ = 'employees'
 
     @staticmethod
@@ -93,9 +83,11 @@ class Employee(_User, Base):
 
 class Customer(_User, Base):
     __tablename__ = 'customers'
-    __table_args__ = (_min_length_constraint('customer'),)
 
     bookings: Mapped[list[Booking]] = relationship(
+        init=False,
+        compare=False,
+        repr=False,
         back_populates='customer',
         lazy='raise',
         cascade='save-update, merge, expunge, delete, delete-orphan',
@@ -122,15 +114,12 @@ class Customer(_User, Base):
 class Booking(Base):
     __tablename__ = 'bookings'
     __table_args__ = (
-        CheckConstraint(f'guest_name IS NULL '
-                        f'OR CHAR_LENGTH(guest_name) >= {USERNAME_MIN_LENGTH}',
-                        name='guest_name_min_length'),
         CheckConstraint('(customer_id IS NOT NULL AND guest_name IS NULL) '
                         'OR (customer_id is NULL AND guest_name is NOT NULL)',
-                        name='customer_guest_mutually_exclusive')
+                        name='customer_guest_mutually_exclusive'),
     )
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(init=False, primary_key=True, index=True)
     date: Mapped[datetime.date] = mapped_column(index=True)
     guest_name: Mapped[Optional[str]] = mapped_column(String(USERNAME_MAX_LENGTH))
 
@@ -138,12 +127,14 @@ class Booking(Base):
     timeslot_id: Mapped[int] = mapped_column(ForeignKey('timeslots.id', ondelete='cascade'))
     court_id: Mapped[int] = mapped_column(ForeignKey('courts.id', ondelete='cascade'))
 
-    customer: Mapped[Customer] = relationship(back_populates='bookings', lazy='joined', innerjoin=True)
-    timeslot: Mapped[Timeslot] = relationship(lazy='joined', innerjoin=True)
-    court: Mapped[Court] = relationship(lazy='joined', innerjoin=True)
+    customer: Mapped[Customer] = relationship(
+        init=False, compare=False, repr=False, back_populates='bookings', lazy='joined'
+    )
+    timeslot: Mapped[Timeslot] = relationship(init=False, compare=False, repr=False, lazy='joined', innerjoin=True)
+    court: Mapped[Court] = relationship(init=False, compare=False, repr=False, lazy='joined', innerjoin=True)
 
     def __init__(self, date: datetime.date, timeslot_id: int, court_id: int,
-                 guest_name: Optional[str] = None, customer_id: Optional[str] = None) -> None:
+                 guest_name: Optional[str] = None, customer_id: Optional[int] = None) -> None:
         Base.__init__(
             self, date=date, guest_name=guest_name, customer_id=customer_id,
             timeslot_id=timeslot_id, court_id=court_id
@@ -166,12 +157,8 @@ class Booking(Base):
 
 class Timeslot(Base):
     __tablename__ = 'timeslots'
-    __table_args__ = (
-        CheckConstraint('TIMEDIFF(end, start) > 0',
-                        name='duration_positive'),
-    )
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(init=False, primary_key=True, index=True)
     start: Mapped[datetime.time]
     end: Mapped[datetime.time]
 
@@ -189,21 +176,9 @@ class Timeslot(Base):
 
 
 class Court(Base):
-    NAME_MIN_LENGTH = 2
-    NAME_MAX_LENGTH = 16
-    SURFACE_MIN_LENGTH = 1
-    SURFACE_MAX_LENGTH = 16
-
     __tablename__ = 'courts'
-    __table_args__ = (
-        CheckConstraint(f'CHAR_LENGTH(name) >= {NAME_MIN_LENGTH}',
-                        name='name_min_length'),
-        CheckConstraint(f'surface IS NULL OR '
-                        f'CHAR_LENGTH(surface) >= {SURFACE_MIN_LENGTH}',
-                        name='surface_min_length')
-    )
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(init=False, primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String(NAME_MAX_LENGTH), unique=True)
     surface: Mapped[Optional[str]] = mapped_column(String(SURFACE_MAX_LENGTH))
 
@@ -216,7 +191,7 @@ class Court(Base):
             return await session.get(Court, id_or_name)
 
         if isinstance(id_or_name, str):
-            result = await session.scalars(select(Court))
+            result = await session.scalars(select(Court).filter_by(name=id_or_name))
             return result.one_or_none()
 
         raise TypeError('int or str expected')
@@ -230,20 +205,26 @@ class Court(Base):
 class Closing(Base):
     __tablename__ = 'closings'
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(init=False, primary_key=True, index=True)
     date: Mapped[datetime.date] = mapped_column(index=True)
 
     start_timeslot_id: Mapped[int] = mapped_column(ForeignKey('timeslots.id'))
     end_timeslot_id: Mapped[int] = mapped_column(ForeignKey('timeslots.id'))
     court_id: Mapped[int] = mapped_column(ForeignKey('courts.id'))
 
-    court: Mapped[Court] = relationship('Court', lazy='joined', innerjoin=True)
+    court: Mapped[Court] = relationship(init=False, compare=False, repr=False, lazy='joined', innerjoin=True)
     start_timeslot: Mapped[Timeslot] = relationship(
+        init=False,
+        compare=False,
+        repr=False,
         foreign_keys=[start_timeslot_id],
         lazy='joined',
         innerjoin=True
     )
     end_timeslot: Mapped[Timeslot] = relationship(
+        init=False,
+        compare=False,
+        repr=False,
         foreign_keys=[end_timeslot_id],
         lazy='joined',
         innerjoin=True

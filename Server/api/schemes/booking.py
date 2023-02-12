@@ -1,8 +1,8 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field
 from typing import Optional
 import datetime
 
-from ..db.models import USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH
+from .user import USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH
 
 _STARTUP_DAY = datetime.datetime.now().date()
 

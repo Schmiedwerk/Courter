@@ -8,7 +8,8 @@ from ..db.models import Employee, Booking, Closing
 
 from ..administration.bookings import BookingCreator, BookingManager
 from ..administration.closings import ClosingCreator, ClosingManager
-from ..auth import user_from_token, validate_role
+from ..auth import validate_role
+from ..auth.token import user_from_token
 from ..exceptions import bad_request
 from ..schemes import UserFromToken, GuestBookingIn, BookingOut, ClosingIn, ClosingOut
 

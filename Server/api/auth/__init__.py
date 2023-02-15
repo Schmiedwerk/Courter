@@ -1,28 +1,16 @@
-from fastapi import Depends
-from fastapi.security import OAuth2PasswordBearer
-from passlib.context import CryptContext
-from jose import jwt, JWTError
-from decouple import config
-
 from sqlalchemy.ext.asyncio import AsyncSession
+from passlib.context import CryptContext
 
-from typing import Type, Optional, Union
-from datetime import datetime, timedelta
+from typing import Type, Union
 
 from ..db.models import Admin, Employee, Customer
-
 from ..administration.users import get_user, role_from_class
 from .exceptions import (
     INCOMPLETE_CREDENTIALS_EXCEPTION, INVALID_CREDENTIALS_EXCEPTION, ROLE_EXCEPTION, INVALID_TOKEN_EXCEPTION
 )
 from ..schemes.user import UserInternal, UserFromToken
 
-
-_ALGORITHM = 'HS256'
-_KEY = config('KEY')
-
 _BCRYPT_CONTEXT = CryptContext(schemes=['bcrypt'], deprecated='auto')
-_OAUTH2_BEARER = OAuth2PasswordBearer(tokenUrl='token')
 
 
 async def authenticate_user(username: str, password: str,
@@ -37,42 +25,11 @@ async def authenticate_user(username: str, password: str,
     return user
 
 
-async def user_from_token(token: str = Depends(_OAUTH2_BEARER)) -> UserFromToken:
-    try:
-        payload = jwt.decode(token, _KEY, _ALGORITHM)
-        username = payload.get('sub')
-        user_id = payload.get('id')
-        role = payload.get('role')
-
-        if username is None or user_id is None:
-            raise INCOMPLETE_CREDENTIALS_EXCEPTION
-
-        return UserFromToken(
-            id=user_id, username=username, role=role
-        )
-
-    except JWTError:
-        raise INVALID_TOKEN_EXCEPTION
-
-
-def validate_role(cls: Union[Type[Admin], Type[Employee], Type[Customer]],
-                        user: UserFromToken) -> UserFromToken:
+def validate_role(cls: Union[Type[Admin], Type[Employee], Type[Customer]], user: UserFromToken) -> UserFromToken:
     if user.role != role_from_class(cls):
         raise ROLE_EXCEPTION
 
     return user
-
-
-def create_access_token(user: UserFromToken, expires_delta: Optional[timedelta] = None) -> str:
-    encode = {
-        'sub': user.username,
-        'id': user.id,
-        'role': user.role,
-        'exp': (datetime.utcnow() + expires_delta if expires_delta is not None
-                else datetime.utcnow() + timedelta(minutes=10))
-    }
-
-    return jwt.encode(encode, _KEY, _ALGORITHM)
 
 
 def get_password_hash(password: str) -> str:

@@ -2,7 +2,7 @@ from argparse import ArgumentParser
 from decouple import config
 import uvicorn
 
-from api.db.access import init_dbms_access
+from api.db.access import init_db_access
 
 DBMS_DEFAULT_HOST = 'localhost'
 DBMS_DEFAULT_PORT = 3306
@@ -56,9 +56,9 @@ args = parser.parse_args()
 
 
 def init_dbms():
-    init_dbms_access(
+    init_db_access(
         dbms=config('DBMS'),
-        db_name=config('DB'),
+        database=config('DB'),
         username=args.username,
         password=args.pw,
         host=args.dbms_host,

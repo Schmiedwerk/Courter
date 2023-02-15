@@ -1,10 +1,10 @@
-import pyinputplus as pyip
 from secrets import token_hex
-from getpass import getpass
+import qprompt
 
-from api.db.access import DB_APIS, get_engine, get_session_cls
+from api.db.access import DB_DRIVERS, get_engine, get_session_cls
 from api.db.models import Base, Admin
 from api.auth import get_password_hash
+from api.schemes.user import USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH, PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH
 
 
 class SetupAbortedException(Exception):
@@ -15,34 +15,27 @@ def create_config():
     print('\nWarnings:')
     print(' - You need an empty database for the Courter API server before running the setup.')
     print(' - Continuing will override any current configuration.\n')
-    aborted = pyip.inputYesNo(
-        prompt='Do you want to run the setup? [yes / no]\n'
-    ) == 'no'
-    if aborted:
+    run_setup = qprompt.ask_yesno('Do you want to run the setup? ')
+    if not run_setup:
         raise SetupAbortedException()
 
     config = dict()
 
-    config['DBMS'] = pyip.inputMenu(
-        choices=tuple(DB_APIS.keys()),
-        prompt='Please pick the DBMS you want to use.\n',
-        lettered=True
+    print('Please pick the DBMS you want to use.')
+    menu = qprompt.Menu()
+    for dbms in DB_DRIVERS.keys():
+        menu.enum(dbms)
+    config['DBMS'] = menu.show(header='Database Management Systems', returns='desc')
+
+    config['DB'] = qprompt.ask_str('What is the name of your Courter API database? ')
+
+    generate_key = qprompt.ask_yesno(
+        'Would you like the setup to generate a key for signing JWTs (recommended)? '
     )
-
-    config['DB'] = pyip.inputStr(
-        prompt='What is the name of your Courter API database?\n'
-    )
-
-    generate_key = pyip.inputYesNo(
-        prompt='Would you like the setup to generate a key for signing JWTs? '
-               '[yes (recommended) / no]\n'
-    ) == 'yes'
-
     if generate_key:
         key = token_hex(32)
     else:
-        key = pyip.inputStr(prompt='Please enter your key.\n')
-
+        key = qprompt.ask_str('Please enter your key.')
     config['KEY'] = key
 
     with open('.env', 'w') as config_file:
@@ -57,10 +50,18 @@ def initial_db_setup():
 
 
 def _create_admin():
-    admin_name = pyip.inputStr('Please enter a username for the first administrator account.\n')
+    admin_name = qprompt.ask_str(
+        f'Please enter a username for the first administrator account'
+        f' ({USERNAME_MIN_LENGTH} - {USERNAME_MAX_LENGTH} characters) ',
+        valid=lambda name: USERNAME_MIN_LENGTH <= len(name) <= USERNAME_MAX_LENGTH
+    )
     while True:
-        password = getpass("Enter the administrator's password.\n")
-        password_reenter = getpass('Re-enter the password for confirmation.\n')
+        password = qprompt.ask_pass(
+            msg=f"Enter the administrator's password ({PASSWORD_MIN_LENGTH} - {PASSWORD_MAX_LENGTH} characters) ",
+            valid=lambda pw: PASSWORD_MIN_LENGTH <= len(pw) <= PASSWORD_MAX_LENGTH
+        )
+
+        password_reenter = qprompt.ask_pass(msg='Re-enter the password for confirmation ')
 
         if password == password_reenter:
             break

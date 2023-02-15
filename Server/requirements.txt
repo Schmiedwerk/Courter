@@ -1,5 +1,6 @@
 aiofiles
 aiomysql
+aiosqlite
 anyio
 bcrypt
 cffi
@@ -9,17 +10,19 @@ ecdsa
 fastapi
 greenlet
 h11
+httpx
 idna
 passlib
 psycopg2-binary
 pyasn1
 pycparser
 pydantic
-PyInputPlus
 PyMySQL
+pytest
 python-decouple
 python-jose
 python-multipart
+qprompt
 rsa
 six
 sniffio

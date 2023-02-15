@@ -1,16 +1,21 @@
 from pydantic import BaseModel, Field
 from typing import Optional
-from ..db.models import Court
+
+
+NAME_MIN_LENGTH = 2
+NAME_MAX_LENGTH = 32
+SURFACE_MIN_LENGTH = 1
+SURFACE_MAX_LENGTH = 16
 
 
 class CourtIn(BaseModel):
-    name: str = Field(min_length=Court.NAME_MIN_LENGTH, max_length=Court.NAME_MAX_LENGTH)
-    surface: Optional[str] = Field(min_length=Court.SURFACE_MIN_LENGTH, max_length=Court.SURFACE_MAX_LENGTH)
+    name: str = Field(min_length=NAME_MIN_LENGTH, max_length=NAME_MAX_LENGTH)
+    surface: Optional[str] = Field(min_length=SURFACE_MIN_LENGTH, max_length=SURFACE_MAX_LENGTH)
 
     class Config:
         schema_extra = {
             'example': {
-                'name': 'Wimbledon Centre',
+                'name': 'Wimbledon Centre Court',
                 'surface': 'grass'
             }
         }

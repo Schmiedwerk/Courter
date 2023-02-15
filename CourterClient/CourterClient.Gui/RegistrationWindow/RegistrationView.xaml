@@ -63,7 +63,7 @@
                             <PasswordBox x:Name="pwInputBox2" PasswordChanged="pwInputBox2_PasswordChanged" Style="{StaticResource textBox2}" Background="Transparent"/>
                         </Grid>
                     </Border>
-                    <Button Content="erstellen" Style="{StaticResource button}"/>
+                    <Button Content="erstellen" Style="{StaticResource button}" Click="CreateButton"/>
                 </StackPanel>
             </Grid>
         </Border>

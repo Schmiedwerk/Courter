@@ -6,11 +6,6 @@ using CourterClient.Gui.UserWindow;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace CourterClient.Gui
@@ -21,6 +16,7 @@ namespace CourterClient.Gui
         public static IHost? AppHost { get; private set; }
         public static IServiceProvider? ServiceProvider { get; private set; }
 
+
         public App()
         {
             AppHost = Host.CreateDefaultBuilder()
@@ -30,7 +26,7 @@ namespace CourterClient.Gui
                     services.AddSingleton<RegistrationView>();
                     services.AddSingleton<UserView>();
                     services.AddSingleton<UserViewModel>();
-                    services.AddTransient<CalendarView>();
+                    services.AddSingleton<CalendarView>();
                 })
                 .Build();
 

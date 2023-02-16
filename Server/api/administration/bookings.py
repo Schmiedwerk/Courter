@@ -44,20 +44,21 @@ class BookingCreator:
 
     def _check_date(self):
         if not (self.today <= self.booking.date <= self.today + _BOOKING_SPAN):
-            raise bad_request('invalid booking date')
+            raise bad_request(f"invalid booking date '{self.booking.date}'")
 
     def _check_time(self):
         if self.today == self.booking.date:
             now = datetime.datetime.now().time()
             if now > self.timeslot.start:
-                raise bad_request('invalid booking timeslot')
+                raise bad_request(f"invalid booking timeslot with start time '{self.timeslot.start}'")
 
     async def _check_closings(self, session: AsyncSession) -> None:
         closings = await Closing.get_filtered(session, date=self.booking.date)
         for closing in closings:
             if (self.booking.court_id == closing.court_id and
                     closing.start_timeslot.start <= self.timeslot.start <= closing.end_timeslot.start):
-                raise conflict('booking conflicts with a closing')
+                raise conflict(f'booking conflicts with a closing from {closing.start_timeslot.start} '
+                               f'to {closing.end_timeslot.end}')
 
     async def _check_bookings(self, session: AsyncSession) -> None:
         bookings_db = await Booking.get_filtered(
@@ -92,6 +93,6 @@ class BookingManager:
         if self.booking_db is None:
             booking_db = await Booking.get(session, self.id)
             if booking_db is None:
-                raise not_found('booking not found')
+                raise not_found(f'booking with id {self.id} not found')
 
             self.booking_db = booking_db

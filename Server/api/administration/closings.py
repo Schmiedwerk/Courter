@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-
+import datetime
 from typing import Union
 
 from ..db.models import Booking, Closing, Timeslot, Court
@@ -7,6 +7,9 @@ from ..db.models import Booking, Closing, Timeslot, Court
 from ..schemes import ClosingIn
 from ..exceptions import conflict, bad_request, not_found
 from . import get_court, get_timeslot
+
+
+CLOSING_SPAN = datetime.timedelta(days=365)
 
 
 class ClosingCreator:
@@ -17,6 +20,7 @@ class ClosingCreator:
         self.court: Union[Court, None] = None
 
     async def create(self, session: AsyncSession) -> Closing:
+        self._check_date()
         self.start_timeslot = await get_timeslot(session, self.closing.start_timeslot_id)
         self.end_timeslot = await get_timeslot(session, self.closing.end_timeslot_id)
         self._check_timeslots()
@@ -29,9 +33,15 @@ class ClosingCreator:
 
         return new_closing
 
+    def _check_date(self):
+        today = datetime.datetime.now().date()
+        if not (today <= self.closing.date <= today + CLOSING_SPAN):
+            raise bad_request(f"invalid closing date '{self.closing.date}' (closing span: {CLOSING_SPAN})")
+
     def _check_timeslots(self):
         if not self.end_timeslot.start >= self.start_timeslot.start:
-            raise bad_request('start timeslot after end timeslot')
+            raise bad_request(f'start timeslot with id {self.start_timeslot.id} after end '
+                              f'timeslot with id {self.end_timeslot.id}')
 
     async def _check_bookings(self, session: AsyncSession) -> None:
         bookings_db = await Booking.get_filtered(
@@ -41,7 +51,8 @@ class ClosingCreator:
         for booking in bookings_db:
             timeslot = booking.timeslot
             if self.start_timeslot.start <= timeslot.start <= self.end_timeslot.start:
-                raise conflict('closing conflicts with booking')
+                raise conflict(f'closing conflicts with booking with id {booking.id} '
+                               f'at timeslot with id {timeslot.id}')
 
     async def _check_closings(self, session: AsyncSession) -> None:
         closings_db = await Closing.get_filtered(
@@ -53,7 +64,7 @@ class ClosingCreator:
             end = closing.end_timeslot.start
 
             if start <= self.start_timeslot.start <= end or start <= self.end_timeslot.start <= end:
-                raise conflict('closing conflicts with another closing')
+                raise conflict(f'closing conflicts with another closing with id {closing.id}')
 
 
 class ClosingManager:
@@ -73,6 +84,6 @@ class ClosingManager:
         if self.closing_db is None:
             closing_db = await Closing.get(session, self.id)
             if closing_db is None:
-                raise not_found('closing not found')
+                raise not_found(f'closing with id {self.id} not found')
 
             self.closing_db = closing_db

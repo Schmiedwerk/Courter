@@ -54,7 +54,7 @@ class _AccountManager:
     async def update_username(self, session: AsyncSession, new_username: str) -> Union[Admin, Employee, Customer]:
         await self._ensure_fetched(session)
         self.user_db.username = new_username
-        await self.user_db.save()
+        await self.user_db.save(session)
         return self.user_db
 
     async def update_password(self, session: AsyncSession, new_password: str) -> Union[Admin, Employee, Customer]:
@@ -75,7 +75,7 @@ class _AccountManager:
             self.user_db = await self.cls.get(session, user_id)
 
             if self.user_db is None:
-                raise not_found(detail='user not found')
+                raise not_found(detail=f'user with id {user_id} not found')
 
     async def _refetch(self, session: AsyncSession) -> None:
         self.user_db = None

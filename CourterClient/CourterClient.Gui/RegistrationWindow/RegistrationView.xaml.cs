@@ -1,16 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CourterClient.ApiClient;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace CourterClient.Gui.RegistrationWindow
 {
@@ -81,6 +72,37 @@ namespace CourterClient.Gui.RegistrationWindow
         private void Image_MouseUp(object sender, MouseButtonEventArgs e)
         {
             this.Close();
+        }
+
+        private async void CreateButton(object sender, RoutedEventArgs e)
+        {
+            string _serverUrl = "http://localhost:8000";
+            RootClient rootClient = new RootClient(_serverUrl);
+
+            string username = textInputBox.Text;
+            string password;
+
+            if(pwInputBox.Password == pwInputBox2.Password && pwInputBox.Password.Length > 0)
+            {
+                password = pwInputBox.Password;
+                Credentials newUser = new Credentials(username, password);
+                var response = await rootClient.SignUp(newUser);
+
+                if(response.Successful)
+                {
+                    var user = response.Result;
+                    MessageBox.Show($"Benutzer: {user?.Username}\nid: {user?.Id} \nErfolgreich erstellt!", "Benutzer erstellt!");
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show($"Anmeldung fehlgeschlagen: {response.Detail}", "Anmelden fehlgeschlagen.");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Ungültiges Passwort, erneut versuchen", "Anmelden fehlgeschlagen.");
+            }
         }
     }
 }

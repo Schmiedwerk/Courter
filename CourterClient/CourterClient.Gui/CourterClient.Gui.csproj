@@ -29,6 +29,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CourterClient.ApiClient\CourterClient.ApiClient.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Logos\Benutzer.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>

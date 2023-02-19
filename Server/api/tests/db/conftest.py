@@ -1,22 +1,17 @@
 import pytest
 
-from api.db import access
-
-
-@pytest.fixture
-def anyio_backend():
-    return 'asyncio'
+from api.db.access import  init_db_access, cleanup_db_access, get_engine
 
 
 @pytest.fixture
 async def setup_db(anyio_backend):
-    access.init_db_access('sqlite', ':memory:')
+    init_db_access('sqlite', ':memory:')
     yield
-    await access.cleanup_db_access()
+    await cleanup_db_access()
 
 
 @pytest.fixture
 def setup_db_sync():
-    access.init_db_access('sqlite', ':memory:', use_async=False)
+    init_db_access('sqlite', ':memory:', use_async=False)
     yield
-    access.get_engine().dispose()
+    get_engine().dispose()

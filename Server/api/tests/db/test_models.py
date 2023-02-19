@@ -4,7 +4,9 @@ from sqlalchemy import select, text
 from datetime import time, datetime, timedelta
 
 from api.db.access import get_session
-from api.db.models import create_tables, Admin, Employee, Customer, Timeslot, Court, Booking, Closing
+from api.db.models import (
+    create_tables, Admin, Employee, Customer, Timeslot, Court, Booking, Closing
+)
 
 
 TODAY = datetime.now().date()
@@ -15,6 +17,7 @@ async def setup_tables(setup_db):
     await create_tables()
 
 
+# overwrites session mock in tests.conftest
 @pytest.fixture
 async def session(setup_db):
     async for session in get_session():

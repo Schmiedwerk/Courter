@@ -5,8 +5,8 @@ from typing import Union
 from ..db.models import Booking, Closing, Timeslot, Court
 
 from ..schemes import ClosingIn
-from ..exceptions import conflict, bad_request, not_found
-from . import get_court, get_timeslot
+from ..exceptions import conflict, bad_request
+from . import get_court, get_timeslot, ManagerBase
 
 
 CLOSING_SPAN = datetime.timedelta(days=365)
@@ -36,7 +36,7 @@ class ClosingCreator:
     def _check_date(self):
         today = datetime.datetime.now().date()
         if not (today <= self.closing.date <= today + CLOSING_SPAN):
-            raise bad_request(f"invalid closing date '{self.closing.date}' (closing span: {CLOSING_SPAN})")
+            raise bad_request(f"invalid closing date '{self.closing.date}' (closing span: {CLOSING_SPAN.days} days)")
 
     def _check_timeslots(self):
         if not self.end_timeslot.start >= self.start_timeslot.start:
@@ -67,23 +67,6 @@ class ClosingCreator:
                 raise conflict(f'closing conflicts with another closing with id {closing.id}')
 
 
-class ClosingManager:
+class ClosingManager(ManagerBase):
     def __init__(self, id_: int) -> None:
-        self.id = id_
-        self.closing_db: Union[Closing, None] = None
-
-    async def get(self, session: AsyncSession) -> Closing:
-        await self._ensure_fetched(session)
-        return self.closing_db
-
-    async def delete(self, session: AsyncSession) -> None:
-        await self._ensure_fetched(session)
-        await self.closing_db.delete(session)
-
-    async def _ensure_fetched(self, session: AsyncSession) -> None:
-        if self.closing_db is None:
-            closing_db = await Closing.get(session, self.id)
-            if closing_db is None:
-                raise not_found(f'closing with id {self.id} not found')
-
-            self.closing_db = closing_db
+        ManagerBase.__init__(self, Closing, id_)

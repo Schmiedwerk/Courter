@@ -28,4 +28,5 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 @ROUTER.post('/signup', response_model=UserOut)
 async def sign_up(user: UserIn, session: AsyncSession = Depends(get_session)) -> Customer:
     # only customers can create an account this way
-    return await create_account(session, Customer, user)
+    customer = await create_account(session, Customer, user)
+    return UserOut(id=customer.id, username=customer.username)

@@ -1,0 +1,57 @@
+﻿<Window x:Class="CourterClient.Gui.Gui.AdminWindow.CreateCourt"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CourterClient.Gui.Gui.AdminWindow"
+        mc:Ignorable="d"
+        Title="Feld Erstellen" Height="210" Width="250"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.8*"/>
+            <RowDefinition Height="0.2*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Vertical">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.5*"/>
+                    <RowDefinition Height="0.5*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.3*"/>
+                    <ColumnDefinition Width="0.7*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Name:" Margin="2"/>
+                <TextBox Grid.Row="0" Grid.Column="1" x:Name="NameInput" Margin="2"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Untergrund:" Margin="2"/>
+                <StackPanel Grid.Row="1" Grid.Column="1" x:Name="GroundInput" Margin="2" VerticalAlignment="Center">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.1*"/>
+                            <ColumnDefinition Width="0.9*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="20"/>
+                        </Grid.RowDefinitions>
+                        <RadioButton Grid.Column="0" Grid.Row="0" x:Name="SandSelector" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="Selector_Checked"/>
+                        <TextBlock  Grid.Column="1" Grid.Row="0" Text="Sand" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <RadioButton Grid.Column="0" Grid.Row="1" x:Name="GrassSelector" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="Selector_Checked"/>
+                        <TextBlock  Grid.Column="1" Grid.Row="1" Text="Rasen" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <RadioButton Grid.Column="0" Grid.Row="2" x:Name="HardSelector" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="Selector_Checked"/>
+                        <TextBlock  Grid.Column="1" Grid.Row="2" Text="Hartplatz" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <RadioButton Grid.Column="0" Grid.Row="3" x:Name="CarpetSelector" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="Selector_Checked"/>
+                        <TextBlock  Grid.Column="1" Grid.Row="3" Text="Teppich" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <RadioButton Grid.Column="0" Grid.Row="4" x:Name="ArtificialSelector" HorizontalAlignment="Center" VerticalAlignment="Center" Checked="Selector_Checked"/>
+                        <TextBlock  Grid.Column="1" Grid.Row="4" Text="Kunstbelag" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+        <Button Grid.Row="1" Content="Erstellen" Width="60" Height="30" Margin="2" Click="Button_Click" />
+    </Grid>
+</Window>

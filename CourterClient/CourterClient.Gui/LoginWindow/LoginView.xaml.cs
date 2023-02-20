@@ -1,5 +1,9 @@
-﻿using CourterClient.Gui.RegistrationWindow;
+﻿using CourterClient.ApiClient;
+using CourterClient.Gui.Gui;
+using CourterClient.Gui.Gui.AdminWindow;
+using CourterClient.Gui.RegistrationWindow;
 using CourterClient.Gui.UserWindow;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -74,17 +78,52 @@ namespace CourterClient.Gui.LoginWindow
             registration.ShowDialog();
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private async void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            if (textInputBox.Text == "mustermann" && pwInputBox.Password == "test123")
+            var rootClient = App.AppHost.Services.GetRequiredService<ClientManager>();
+
+            string username = textInputBox.Text;
+            string password = pwInputBox.Password;
+
+            if(username.Length != 0 || password.Length != 0)
             {
-                var UserWin = new UserView();
-                this.Close();
-                UserWin.ShowDialog();
+                Credentials login = new Credentials(username, password);
+                var response = await rootClient.clientManager.Login(login);
+
+                if (response.Successful)
+                {
+                    if(response.Result == UserRole.Customer)
+                    {
+                        var UserWin = new UserView();
+                        this.Close();
+                        UserWin.ShowDialog();
+                    }
+                    else if(response.Result == UserRole.Employee)
+                    {
+                        var UserWin = new UserView();
+                        this.Close();
+                        UserWin.ShowDialog();
+                    }
+                    else if(response.Result == UserRole.Admin)
+                    {
+                        var vm = new AdminViewModel(rootClient);
+                        var adminWin = new AdminView();
+                        adminWin.DataContext= vm;
+                        
+                        await vm.FillTables();
+                        
+                        this.Close();
+                        adminWin.ShowDialog();
+                    }
+                }
+                else
+                {
+                    MessageBox.Show($"Login fehlgeschlagen: \n{response.Detail}", "Login fehlgeschlagen");
+                }
             }
             else
             {
-                MessageBox.Show("Benutzername oder Passwort sind falsch. Erneut versuchen", "Login fehlgeschlagen.");
+                MessageBox.Show($"Login fehlgeschlagen: \nBenutzername oder Password ungültig", "Login fehlgeschlagen");
             }
         }
     }

@@ -1,4 +1,6 @@
 ﻿using CourterClient.ApiClient;
+using CourterClient.Gui.Gui;
+using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -76,33 +78,43 @@ namespace CourterClient.Gui.RegistrationWindow
 
         private async void CreateButton(object sender, RoutedEventArgs e)
         {
-            string _serverUrl = "http://localhost:8000";
-            RootClient rootClient = new RootClient(_serverUrl);
+            
+            var rootClient = App.AppHost.Services.GetRequiredService<ClientManager>();
 
             string username = textInputBox.Text;
             string password;
 
-            if(pwInputBox.Password == pwInputBox2.Password && pwInputBox.Password.Length > 0)
-            {
-                password = pwInputBox.Password;
-                Credentials newUser = new Credentials(username, password);
-                var response = await rootClient.SignUp(newUser);
 
-                if(response.Successful)
-                {
-                    var user = response.Result;
-                    MessageBox.Show($"Benutzer: {user?.Username}\nid: {user?.Id} \nErfolgreich erstellt!", "Benutzer erstellt!");
-                    this.Close();
-                }
-                else
-                {
-                    MessageBox.Show($"Anmeldung fehlgeschlagen: {response.Detail}", "Anmelden fehlgeschlagen.");
-                }
+            if(pwInputBox.Password.Length < 5)
+            {
+                MessageBox.Show("Anmeldung fehlgeschlagen: \nDas Passwort muss mindestens 5 Zeichen lang sein.", "Anmelden fehlgeschlagen.");
             }
             else
             {
-                MessageBox.Show("Ungültiges Passwort, erneut versuchen", "Anmelden fehlgeschlagen.");
+                if (pwInputBox.Password == pwInputBox2.Password && pwInputBox.Password.Length > 0)
+                {
+
+                    password = pwInputBox.Password;
+                    Credentials newUser = new Credentials(username, password);
+                    var response = await rootClient.clientManager.SignUp(newUser);
+
+                    if (response.Successful)
+                    {
+                        var user = response.Result;
+                        MessageBox.Show($"Benutzer: {user?.Username}\nid: {user?.Id} \nErfolgreich erstellt!", "Benutzer erstellt!");
+                        this.Close();
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Anmeldung fehlgeschlagen: \n{response.Detail}", "Anmelden fehlgeschlagen.");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Anmeldung fehlgeschlagen: \nDie Passwörter stimmen nicht überein.", "Anmelden fehlgeschlagen.");
+                }
             }
+
         }
     }
 }

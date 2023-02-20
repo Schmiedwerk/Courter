@@ -1,0 +1,33 @@
+﻿<Window x:Class="CourterClient.Gui.Gui.AdminWindow.CreateUser"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CourterClient.Gui.Gui.AdminWindow"
+        mc:Ignorable="d"
+        Title="Nutzer Erstellen" Height="120" Width="250"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.7*"/>
+            <RowDefinition Height="0.3*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Vertical">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.5*"/>
+                    <RowDefinition Height="0.5*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.3*"/>
+                    <ColumnDefinition Width="0.7*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Name:" Margin="2"/>
+                <TextBox Grid.Row="0" Grid.Column="1" x:Name="UsernameInput" Margin="2"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Passwort:" Margin="2"/>
+                <PasswordBox Grid.Row="1" Grid.Column="1" x:Name="PasswordInput" Margin="2"/>
+            </Grid>
+        </StackPanel>
+        <Button Grid.Row="1" Content="Erstellen" Width="60" Margin="2" Click="Button_Click"/>
+    </Grid>
+</Window>

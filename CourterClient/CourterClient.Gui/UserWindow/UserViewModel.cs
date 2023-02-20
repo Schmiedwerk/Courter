@@ -55,7 +55,6 @@ namespace CourterClient.Gui.Gui.UserWindow
 
             CreateCourtTable();
 
-
             SetNextDay = new DelegateCommand((o) =>
             {
                 DateManager.SetDate(DateManager.Next);
@@ -72,7 +71,6 @@ namespace CourterClient.Gui.Gui.UserWindow
                 cal.ShowDialog();
             });
         }
-
 
         public void CreateTimeTable(int startVal, int endVal)
         {

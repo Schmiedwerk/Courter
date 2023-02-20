@@ -11,3 +11,14 @@ internal record Token(
 internal record HttpExceptionBody(
     [property: JsonProperty("detail")] string? Detail
 );
+
+internal record HttpValidationError(
+    [property: JsonProperty("detail")] IList<ValidationError> Detail
+);
+
+internal record ValidationError(
+    [property: JsonProperty("loc")] IList<string> Location,
+    [property: JsonProperty("msg")] string Message,
+    [property: JsonProperty("type")] string Type
+);
+

@@ -12,7 +12,7 @@ from ..administration.accounts import create_account
 from ..schemes import UserInternal, AccessToken, UserIn, UserOut
 
 
-ROUTER = APIRouter(tags=['login'])
+ROUTER = APIRouter(tags=['auth'])
 
 
 @ROUTER.post('/token')
@@ -25,8 +25,8 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return AccessToken(access_token=token, token_type='bearer')
 
 
-@ROUTER.post('/signup', response_model=UserOut)
-async def sign_up(user: UserIn, session: AsyncSession = Depends(get_session)) -> Customer:
+@ROUTER.post('/signup')
+async def sign_up(user: UserIn, session: AsyncSession = Depends(get_session)) -> UserOut:
     # only customers can create an account this way
     customer = await create_account(session, Customer, user)
     return UserOut(id=customer.id, username=customer.username)

@@ -1,4 +1,6 @@
-﻿using Flurl.Http;
+﻿using System.Net;
+using Flurl.Http;
+
 namespace CourterClient.ApiClient;
 
 public class ApiResponse
@@ -19,13 +21,31 @@ public class ApiResponse
 
     internal static async Task<ApiResponse> MakeUnsuccessful(FlurlHttpException exc)
     {
-        HttpExceptionBody? detail = await exc.GetResponseJsonAsync<HttpExceptionBody>().ConfigureAwait(false);
         return new ApiResponse
         {
             Successful = false,
             StatusCode = exc.StatusCode,
-            Detail = detail?.Detail
+            Detail = await ExtractDetail(exc)
         };
+    }
+
+    protected static async Task<string?> ExtractDetail(FlurlHttpException exc)
+    {
+        string? detail;
+
+        if (exc.StatusCode == (int)HttpStatusCode.UnprocessableEntity)
+        {
+            HttpValidationError error = await exc.GetResponseJsonAsync<HttpValidationError>().ConfigureAwait(false);
+            ValidationError valError = error.Detail[0];
+            detail = $"{valError.Location[1]}: {valError.Message}";
+        }
+        else
+        {
+            HttpExceptionBody excBody = await exc.GetResponseJsonAsync<HttpExceptionBody>().ConfigureAwait(false);
+            detail = excBody.Detail;
+        }
+
+        return detail;
     }
 }
 
@@ -49,13 +69,11 @@ public class ApiResponse<T> : ApiResponse
 
     new internal static async Task<ApiResponse<T>> MakeUnsuccessful(FlurlHttpException exc)
     {
-        HttpExceptionBody? detail = await exc.GetResponseJsonAsync<HttpExceptionBody>().ConfigureAwait(false);
-
         return new ApiResponse<T>
         {
             Successful = false,
             StatusCode = exc.StatusCode,
-            Detail = detail?.Detail,
+            Detail = await ExtractDetail(exc),
             Result = null
         };
     }
@@ -81,13 +99,11 @@ public class ApiValueResponse<T> : ApiResponse
 
     new internal static async Task<ApiValueResponse<T>> MakeUnsuccessful(FlurlHttpException exc)
     {
-        HttpExceptionBody? detail = await exc.GetResponseJsonAsync<HttpExceptionBody>().ConfigureAwait(false);
-
         return new ApiValueResponse<T>
         {
             Successful = false,
             StatusCode = exc.StatusCode,
-            Detail = detail?.Detail,
+            Detail = await ExtractDetail(exc),
             Result = null
         };
     }

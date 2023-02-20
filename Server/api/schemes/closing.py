@@ -1,23 +1,14 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
 import datetime
 
 _TODAY = datetime.datetime.now().date()
-_CLOSING_SPAN = datetime.timedelta(365)
 
 
-class _ClosingBase(BaseModel):
+class ClosingIn(BaseModel):
     date: datetime.date
     start_timeslot_id: int
     end_timeslot_id: int
     court_id: int
-
-
-class ClosingIn(_ClosingBase):
-    @validator('date')
-    def check_date(cls, date: datetime.date) -> datetime.date:
-        if not (_TODAY <= date <= _TODAY + _CLOSING_SPAN):
-            raise ValueError('invalid closing date')
-        return date
 
     class Config:
         schema_extra = {
@@ -30,7 +21,7 @@ class ClosingIn(_ClosingBase):
         }
 
 
-class ClosingOut(_ClosingBase):
+class ClosingOut(ClosingIn):
     id: int
 
     class Config:

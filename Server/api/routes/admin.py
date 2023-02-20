@@ -59,7 +59,7 @@ async def delete_employee(employee_id: int, session: AsyncSession = Depends(get_
 async def add_court(court: CourtIn, session: AsyncSession = Depends(get_session)) -> Court:
     court_db = await Court.get(session, court.name)
     if court_db is not None:
-        raise conflict('duplicate court name')
+        raise conflict(f"duplicate court name '{court.name}'")
 
     new_court = Court(court.name, court.surface)
     await new_court.save(session)
@@ -71,7 +71,7 @@ async def add_court(court: CourtIn, session: AsyncSession = Depends(get_session)
 async def delete_court(court_id: int, session: AsyncSession = Depends(get_session)) -> None:
     court_db = await Court.get(session, court_id)
     if court_db is None:
-        raise not_found('court not found')
+        raise not_found(f'court with id {court_id} not found')
 
     await court_db.delete(session)
 
@@ -81,11 +81,13 @@ async def add_timeslot(timeslot: TimeslotIn, session: AsyncSession = Depends(get
     if timeslot.end <= timeslot.start:
         raise conflict('end time before start time')
 
-    # check for overlap
+    # check for conflicting timeslots
     timeslots_db = await Timeslot.get_all(session)
     for slot_db in timeslots_db:
-        if slot_db.start < timeslot.start < slot_db.end or slot_db.start < timeslot.end < slot_db.end:
-            raise conflict('overlapping timeslots disallowed')
+        if not (slot_db.end <= timeslot.start or timeslot.end <= slot_db.start):
+            raise conflict(
+                f'timeslot conflicts with existing timeslot with id {slot_db.id} ({slot_db.start} - {slot_db.end})'
+            )
 
     new_timeslot = Timeslot(timeslot.start, timeslot.end)
     await new_timeslot.save(session)
@@ -97,6 +99,6 @@ async def add_timeslot(timeslot: TimeslotIn, session: AsyncSession = Depends(get
 async def delete_timeslot(timeslot_id: int, session: AsyncSession = Depends(get_session)) -> None:
     timeslot_db = await Timeslot.get(session, timeslot_id)
     if timeslot_db is None:
-        raise not_found('timeslot not found')
+        raise not_found(f'timeslot with id {timeslot_id} not found')
 
     await timeslot_db.save(session)

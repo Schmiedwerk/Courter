@@ -6,9 +6,10 @@ import datetime
 from ..db.models import Booking, Closing, Timeslot, Court
 from ..exceptions import not_found, conflict, bad_request
 from ..schemes import GuestBookingIn, CustomerBookingIn
-from . import get_court, get_timeslot
+from . import get_court, get_timeslot, ManagerBase
 
-_BOOKING_SPAN = datetime.timedelta(days=60)
+
+BOOKING_SPAN = datetime.timedelta(days=60)
 
 
 class BookingCreator:
@@ -22,11 +23,10 @@ class BookingCreator:
         self.today = datetime.datetime.now().date()
 
     async def create(self, session: AsyncSession) -> Booking:
-        self.timeslot = await get_timeslot(session, self.booking.timeslot_id)
-        self.court = await get_court(session, self.booking.court_id)
-
         self._check_date()
-        self._check_time()
+        self.timeslot = await get_timeslot(session, self.booking.timeslot_id)
+        self._check_timeslot()
+        self.court = await get_court(session, self.booking.court_id)
 
         await self._check_closings(session)
         await self._check_bookings(session)
@@ -43,21 +43,21 @@ class BookingCreator:
             self.booking.__dict__['guest_name'] = None
 
     def _check_date(self):
-        if not (self.today <= self.booking.date <= self.today + _BOOKING_SPAN):
-            raise bad_request('invalid booking date')
+        if not (self.today <= self.booking.date <= self.today + BOOKING_SPAN):
+            raise bad_request(f"invalid booking date '{self.booking.date}'")
 
-    def _check_time(self):
+    def _check_timeslot(self):
         if self.today == self.booking.date:
             now = datetime.datetime.now().time()
             if now > self.timeslot.start:
-                raise bad_request('invalid booking timeslot')
+                raise bad_request(f"invalid booking timeslot with start time '{self.timeslot.start}'")
 
     async def _check_closings(self, session: AsyncSession) -> None:
-        closings = await Closing.get_filtered(session, date=self.booking.date)
+        closings = await Closing.get_filtered(session, date=self.booking.date, court_id=self.booking.court_id)
         for closing in closings:
-            if (self.booking.court_id == closing.court_id and
-                    closing.start_timeslot.start <= self.timeslot.start <= closing.end_timeslot.start):
-                raise conflict('booking conflicts with a closing')
+            if closing.start_timeslot.start <= self.timeslot.start <= closing.end_timeslot.start:
+                raise conflict(f'booking conflicts with a closing from {closing.start_timeslot.start} '
+                               f'to {closing.end_timeslot.end}')
 
     async def _check_bookings(self, session: AsyncSession) -> None:
         bookings_db = await Booking.get_filtered(
@@ -68,30 +68,13 @@ class BookingCreator:
             raise conflict('booking conflicts with another booking')
 
 
-class BookingManager:
+class BookingManager(ManagerBase):
     def __init__(self, id_: int) -> None:
-        self.id = id_
-        self.booking_db: Union[Booking, None] = None
+        ManagerBase.__init__(self, Booking, id_)
 
     async def is_guest_booking(self, session: AsyncSession) -> bool:
         return not await self.is_customer_booking(session)
 
     async def is_customer_booking(self, session: AsyncSession) -> bool:
-        await self._ensure_fetched(session)
-        return self.booking_db.guest_name is None
-
-    async def get(self, session) -> Booking:
-        await self._ensure_fetched(session)
-        return self.booking_db
-
-    async def delete(self, session: AsyncSession) -> None:
-        await self._ensure_fetched(session)
-        await self.booking_db.delete(session)
-
-    async def _ensure_fetched(self, session: AsyncSession) -> None:
-        if self.booking_db is None:
-            booking_db = await Booking.get(session, self.id)
-            if booking_db is None:
-                raise not_found('booking not found')
-
-            self.booking_db = booking_db
+        booking_db = await self.get(session)
+        return booking_db.guest_name is None

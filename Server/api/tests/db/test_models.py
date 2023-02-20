@@ -1,10 +1,12 @@
 import pytest
-from sqlalchemy import text
+from sqlalchemy import select, text
 
 from datetime import time, datetime, timedelta
 
 from api.db.access import get_session
-from api.db.models import create_tables, Admin, Employee, Customer, Timeslot, Court, Booking, Closing
+from api.db.models import (
+    create_tables, Admin, Employee, Customer, Timeslot, Court, Booking, Closing
+)
 
 
 TODAY = datetime.now().date()
@@ -15,6 +17,7 @@ async def setup_tables(setup_db):
     await create_tables()
 
 
+# overwrites session mock in tests.conftest
 @pytest.fixture
 async def session(setup_db):
     async for session in get_session():
@@ -130,6 +133,20 @@ async def populate_closings(session, populate_courts, populate_timeslots):
     await session.commit()
 
     return closings
+
+
+async def test_save(session):
+    customer = Customer('customer', 'fake_hash')
+    await customer.save(session)
+    session.expunge(customer)
+    customer_db = await session.get(Customer, 1)
+    assert customer_db == customer
+
+
+async def test_delete(session, populate_employees):
+    await populate_employees[2].delete(session)
+    employees = await session.scalars(select(Employee))
+    assert tuple(employees) == populate_employees[:2]
 
 
 async def test_get_admin_by_existing_id(session, populate_admins):

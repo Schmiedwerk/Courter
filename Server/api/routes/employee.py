@@ -41,7 +41,7 @@ async def delete_guest_booking(booking_id: int, session: AsyncSession = Depends(
     manager = BookingManager(booking_id)
     is_guest_booking = await manager.is_guest_booking(session)
     if not is_guest_booking:
-        raise bad_request('booking is not a guest booking')
+        raise bad_request(f'booking with id {booking_id} is not a guest booking')
 
     await manager.delete(session)
 

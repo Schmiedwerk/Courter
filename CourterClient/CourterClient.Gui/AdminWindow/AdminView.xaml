@@ -68,8 +68,8 @@
             <ListView Width="250" Margin="5" ItemsSource="{Binding TimeSlots}" SelectionMode="Single" SelectedItem="{Binding CurrentTimeslot}">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Start:" Width="70" DisplayMemberBinding="{Binding Start}"/>
-                        <GridViewColumn Header="Ende:" Width="70"  DisplayMemberBinding="{Binding End}"/>
+                        <GridViewColumn Header="Start:" Width="70" DisplayMemberBinding="{Binding Start, StringFormat={}{0:HH:mm}}"/>
+                        <GridViewColumn Header="Ende:" Width="70"  DisplayMemberBinding="{Binding End, StringFormat={}{0:HH:mm}}"/>
                     </GridView>
                 </ListView.View>
             </ListView>

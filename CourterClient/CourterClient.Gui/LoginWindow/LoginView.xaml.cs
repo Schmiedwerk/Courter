@@ -1,6 +1,7 @@
 ﻿using CourterClient.ApiClient;
 using CourterClient.Gui.Gui;
 using CourterClient.Gui.Gui.AdminWindow;
+using CourterClient.Gui.Gui.UserWindow;
 using CourterClient.Gui.RegistrationWindow;
 using CourterClient.Gui.UserWindow;
 using Microsoft.Extensions.DependencyInjection;
@@ -94,7 +95,14 @@ namespace CourterClient.Gui.LoginWindow
                 {
                     if(response.Result == UserRole.Customer)
                     {
+                        var userVm = new UserViewModel(rootClient);
                         var UserWin = new UserView();
+                        UserWin.DataContext = userVm;
+
+                        await userVm.CreateTimeTable();
+
+                        await userVm.CreateCourtTable();
+
                         this.Close();
                         UserWin.ShowDialog();
                     }
@@ -106,11 +114,11 @@ namespace CourterClient.Gui.LoginWindow
                     }
                     else if(response.Result == UserRole.Admin)
                     {
-                        var vm = new AdminViewModel(rootClient);
+                        var adminVm = new AdminViewModel(rootClient);
                         var adminWin = new AdminView();
-                        adminWin.DataContext= vm;
+                        adminWin.DataContext= adminVm;
                         
-                        await vm.FillTables();
+                        await adminVm.FillTables();
                         
                         this.Close();
                         adminWin.ShowDialog();

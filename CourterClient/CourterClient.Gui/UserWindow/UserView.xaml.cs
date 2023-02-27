@@ -9,7 +9,6 @@ namespace CourterClient.Gui.UserWindow
         public UserView()
         {
             InitializeComponent();
-            this.DataContext = new UserViewModel();
         }
 
         private void Image_MouseUp(object sender, MouseButtonEventArgs e)

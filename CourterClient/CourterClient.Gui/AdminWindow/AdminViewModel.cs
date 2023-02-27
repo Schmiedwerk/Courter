@@ -348,6 +348,10 @@ namespace CourterClient.Gui.Gui.AdminWindow
                 MessageBox.Show($"Neues Zeitfenster mit \nStartzeit: {newTime?.Start}\nEnde: {newTime?.End} \nErfolgreich erstellt!", "Zeitfenster erstellt!");
                 await GetTimeslots();
             }
+            else
+            {
+                MessageBox.Show($"Erstellen fehlgeschlagen:\n{response.Detail}", "Erstellen fehlgeschlagen!");
+            }
         }
     }
 }

@@ -30,10 +30,11 @@ async def get_bookings_for_date(date: datetime.date, customer: UserFromToken = D
     ]
 
 
-@ROUTER.post('/bookings', status_code=status.HTTP_201_CREATED, response_model=BookingOut)
+@ROUTER.post('/bookings', status_code=status.HTTP_201_CREATED)
 async def add_booking(booking: CustomerBookingIn, customer: UserFromToken = Depends(_validate_customer),
-                      session: AsyncSession = Depends(get_session)) -> Booking:
-    return await BookingCreator(booking, customer.id).create(session)
+                      session: AsyncSession = Depends(get_session)) -> BookingOut:
+    new_booking = await BookingCreator(booking, customer.id).create(session)
+    return BookingOut.from_orm(new_booking)
 
 
 @ROUTER.delete('/bookings/{booking_id}')

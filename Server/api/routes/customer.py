@@ -24,7 +24,10 @@ ROUTER = APIRouter(prefix='/customer', tags=['customer'])
 async def get_bookings_for_date(date: datetime.date, customer: UserFromToken = Depends(_validate_customer),
                                 session: AsyncSession = Depends(get_session)) -> list[Union[BookingOut, BookingBase]]:
     bookings = await Booking.get_filtered(session, date=date)
-    return [booking if booking.customer_id == customer.id else BookingBase.from_orm(booking) for booking in bookings]
+    return [
+        BookingOut.from_orm(booking) if booking.customer_id == customer.id
+        else BookingBase.from_orm(booking) for booking in bookings
+    ]
 
 
 @ROUTER.post('/bookings', status_code=status.HTTP_201_CREATED, response_model=BookingOut)

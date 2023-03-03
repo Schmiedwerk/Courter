@@ -28,7 +28,7 @@ ROUTER = APIRouter(
 async def get_bookings_for_date(date: datetime.date,
                                 session: AsyncSession = Depends(get_session)) -> list[Booking]:
     bookings = await Booking.get_filtered(session, date=date)
-    return  list(bookings)
+    return list(bookings)
 
 
 @ROUTER.post('/bookings', status_code=status.HTTP_201_CREATED, response_model=BookingOut)

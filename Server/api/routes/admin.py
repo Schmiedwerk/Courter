@@ -101,4 +101,4 @@ async def delete_timeslot(timeslot_id: int, session: AsyncSession = Depends(get_
     if timeslot_db is None:
         raise not_found(f'timeslot with id {timeslot_id} not found')
 
-    await timeslot_db.save(session)
+    await timeslot_db.delete(session)

@@ -1,0 +1,85 @@
+﻿<Window x:Class="CourterClient.Gui.Gui.AdminWindow.AdminView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CourterClient.Gui.Gui.AdminWindow"
+        d:DataContext="{d:DesignInstance local:AdminViewModel}"
+        mc:Ignorable="d"
+        Title="Administration" Height="600" Width="420"
+        WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="125"/>
+            <RowDefinition Height="125"/>
+            <RowDefinition Height="125"/>
+            <RowDefinition Height="125"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="Courter Management:" FontSize="12" Margin="5"/>
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <TextBlock Width="55" Text="Admins:" Margin="5" FontSize="10"/>
+            <ListView x:Name="AdminList" Width="250" Margin="5" ItemsSource="{Binding Admins}" SelectionMode="Single" SelectedItem="{Binding CurrentAdmin}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Id:" Width="25" DisplayMemberBinding="{Binding Id}"/>
+                        <GridViewColumn Header="Benutzername:" Width="100" DisplayMemberBinding="{Binding Username}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <StackPanel Orientation="Vertical" Width="75" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button Content="Hinzufügen" Height="20" Margin="5" FontSize="10" Command="{Binding CreateAdminAccount}"/>
+                <Button Content="Entfernen" Height="20" Margin="5" FontSize="10" Command="{Binding DeleteAdminAccount}"/>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="2">
+            <TextBlock Width="55" Text="Mitarbeiter:" Margin="5" FontSize="10"/>
+            <ListView Width="250" Margin="5" ItemsSource="{Binding Employees}" SelectionMode="Single" SelectedItem="{Binding CurrentEmployee}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Id:" Width="25" DisplayMemberBinding="{Binding Id}"/>
+                        <GridViewColumn Header="Benutzername:" Width="100" DisplayMemberBinding="{Binding Username}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <StackPanel Orientation="Vertical" Width="75" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button Content="Hinzufügen" Height="20" Margin="5" FontSize="10" Command="{Binding CreateEmployeeAccount}"/>
+                <Button Content="Entfernen" Height="20" Margin="5" FontSize="10" Command="{Binding DeleteEmployeeAccount}"/>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="3">
+            <TextBlock Width="55" Text="Spielfelder:" Margin="5" FontSize="10"/>
+            <ListView Width="250" Margin="5" ItemsSource="{Binding Courts}" SelectionMode="Single" SelectedItem="{Binding CurrentCourt}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Name:" Width="100" DisplayMemberBinding="{Binding Name}"/>
+                        <GridViewColumn Header="Untergrund:" Width="100" DisplayMemberBinding="{Binding Surface}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <StackPanel Orientation="Vertical" Width="75" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button Content="Hinzufügen" Height="20" Margin="5" FontSize="10" Command="{Binding CreateNewCourt}"/>
+                <Button Content="Entfernen" Height="20" Margin="5" FontSize="10" Command="{Binding DeleteCourt}"/>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="4">
+            <TextBlock Width="55" Text="Zeitfenster:" Margin="5" FontSize="10"/>
+            <ListView Width="250" Margin="5" ItemsSource="{Binding TimeSlots}" SelectionMode="Single" SelectedItem="{Binding CurrentTimeslot}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Start:" Width="70" DisplayMemberBinding="{Binding Start, StringFormat={}{0:HH:mm}}"/>
+                        <GridViewColumn Header="Ende:" Width="70"  DisplayMemberBinding="{Binding End, StringFormat={}{0:HH:mm}}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <StackPanel Orientation="Vertical" Width="75" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button Content="Hinzufügen" Height="20" Margin="5" FontSize="10" Command="{Binding CreateNewTimeslot}"/>
+                <Button Content="Entfernen" Height="20" Margin="5" FontSize="10" Command="{Binding DeleteTimeslot}"/>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="5" HorizontalAlignment="Right" Margin="20 5 20 5" VerticalAlignment="Center">
+            <Button Content="Beenden" Height="25" Width="60" Click="Button_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

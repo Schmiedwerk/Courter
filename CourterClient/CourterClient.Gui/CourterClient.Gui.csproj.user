@@ -2,6 +2,18 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup />
   <ItemGroup>
+    <Compile Update="AdminWindow\AdminView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="AdminWindow\CreateCourt.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="AdminWindow\CreateTime.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="AdminWindow\CreateUser.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="CalendarWindow\CalendarView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -19,6 +31,18 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="AdminWindow\AdminView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="AdminWindow\CreateCourt.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="AdminWindow\CreateTime.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="AdminWindow\CreateUser.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="CalendarWindow\CalendarView.xaml">
       <SubType>Designer</SubType>
     </Page>

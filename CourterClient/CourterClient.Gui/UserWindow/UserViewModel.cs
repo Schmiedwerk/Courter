@@ -1,17 +1,21 @@
-﻿using CourterClient.Gui.CalendarWindow;
+﻿using CourterClient.ApiClient;
+using CourterClient.Gui.CalendarWindow;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CourterClient.Gui.Gui.UserWindow
 {
     class UserViewModel : ViewModelBase
     {
         public TransferDate delegateTransfer;
+        private ClientManager ClientManager { get; set; }
+        private IPublicClient publicClient { get; set; }
         private ObservableCollection<TimeSlot> timeSlots = new ObservableCollection<TimeSlot>();
         private ObservableCollection<CourtDefinition> courts = new ObservableCollection<CourtDefinition>();
-        public List<CourtDefinition> courtList = new List<CourtDefinition>();
         private int Slots = 0;
 
         public DateManager DateManager { get; set; }    
@@ -42,19 +46,13 @@ namespace CourterClient.Gui.Gui.UserWindow
             }
         }
 
-        public UserViewModel()
+        public UserViewModel(ClientManager rootClient)
         {
-            this.DateManager = new DateManager();
-            this.delegateTransfer += new TransferDate(SetCurrentDate);
+            ClientManager = rootClient;
+            publicClient = ClientManager.clientManager.MakePublicClient();
 
-            CreateTimeTable(10, 22);
-            AddCourt("Wimbledon", Slots);
-            AddCourt("New York", Slots);
-            AddCourt("Melbourne", Slots);
-            AddCourt("Paris", Slots);
-
-            CreateCourtTable();
-
+            DateManager = new DateManager();
+            delegateTransfer += new TransferDate(SetCurrentDate);
 
             SetNextDay = new DelegateCommand((o) =>
             {
@@ -73,36 +71,41 @@ namespace CourterClient.Gui.Gui.UserWindow
             });
         }
 
-
-        public void CreateTimeTable(int startVal, int endVal)
+        public async Task CreateTimeTable()
         {
-            this.TimeSlots = new ObservableCollection<TimeSlot>();
+            var remoteTimeslots = await publicClient.GetTimeslotsAsync();
+
+            if(remoteTimeslots.Successful)
             {
-                this.TimeSlots.Add(new TimeSlot("", ""));
-                for (int i = startVal; i <= endVal - 1; i++)
+                List<TimeslotOut> remoteTimeslotList = remoteTimeslots.Result.ToList();
+                this.TimeSlots = new ObservableCollection<TimeSlot>();
                 {
-                    string start = $"{i}:00";
-                    string end = $"{i + 1}:00";
-                    var item = new TimeSlot(start, end);
-                    this.TimeSlots.Add(item);
-                    this.Slots++;
+                    this.TimeSlots.Add(new TimeSlot("", ""));
+                    foreach (var time in remoteTimeslotList)
+                    {
+                        string start = $"{Convert.ToString(time.Start)}";
+                        string end = $"{Convert.ToString(time.End)}";
+                        var item = new TimeSlot(start, end);
+                        this.TimeSlots.Add(item);
+                        this.Slots++;
+                    }
                 }
             }
         }
 
-        public void AddCourt(string courtName, int slots)
+        public async Task CreateCourtTable()
         {
-            CourtDefinition newCourt = new CourtDefinition(courtName, slots);
-            this.courtList.Add(newCourt);
-        }
-
-        public void CreateCourtTable()
-        {
-            this.Courts= new ObservableCollection<CourtDefinition>();
+            var remoteCourts = await publicClient.GetCourtsAsync();
+            if(remoteCourts.Successful)
             {
-                foreach (var item in this.courtList)
+                List<CourtOut> remoteCourtList = remoteCourts.Result.ToList();
+                this.Courts = new ObservableCollection<CourtDefinition>();
                 {
-                    this.Courts.Add(item);
+                    foreach (var court in remoteCourtList)
+                    {
+                        var item = new CourtDefinition(court.Name, Slots);
+                        this.Courts.Add(item);
+                    }
                 }
             }
         }

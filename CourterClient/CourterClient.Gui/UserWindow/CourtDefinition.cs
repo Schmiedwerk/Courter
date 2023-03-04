@@ -38,5 +38,30 @@ namespace CourterClient.Gui.Gui.UserWindow
             Today = current;
         }
 
+        public SlotButtonData IsBookingPast(SlotButtonData button, ApiResponse<IEnumerable<TimeslotOut>> allTimeslots, DateTime timeNow)
+        {
+            if (allTimeslots.Result != null)
+            {
+                TimeslotOut time;
+                foreach (var item in allTimeslots.Result.ToList())
+                {
+                    if (Today == DateOnly.FromDateTime(timeNow) && TimeOnly.FromDateTime(timeNow) > item.Start)
+                    {
+                        if (item.id == button.Id)
+                        {
+                            button.IsButtonEnabled(false);
+                        }
+                    }
+                    else if (Today < DateOnly.FromDateTime(timeNow))
+                    {
+                        if (item.id == button.Id)
+                        {
+                            button.IsButtonEnabled(false);
+                        }
+                    }
+                }
+            }
+            return button;
+        }
     }
 }

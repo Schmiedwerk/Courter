@@ -152,9 +152,10 @@ namespace CourterClient.Gui.Gui.UserWindow
             }
         }
 
-        public void SetCurrentDate(DateOnly date)
+        public async void SetCurrentDate(DateOnly date)
         {
             this.DateManager.SetDate(date);
+            await CreateCourtTable();
         }
 
         public DelegateCommand SetNextDay { get; set; }

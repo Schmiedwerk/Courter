@@ -74,7 +74,7 @@ namespace CourterClient.Gui.Gui.UserWindow
                     CustomerBookingIn newBooking = new CustomerBookingIn(Today, Id, CourtId);
                     var response = await CustomerClient.AddBookingAsync(newBooking);
 
-                    if (response.Successful) 
+                    if (response.Successful)
                     {
                         var booking = response.Result;
 
@@ -90,9 +90,9 @@ namespace CourterClient.Gui.Gui.UserWindow
                                 TimeslotOut time;
                                 CourtOut court;
 
-                                foreach(var item in allTimeslots.Result.ToList())
+                                foreach (var item in allTimeslots.Result.ToList())
                                 {
-                                    if(item.id == Id)
+                                    if (item.id == Id)
                                     {
                                         time = item;
                                         foreach (var item2 in allCourts.Result.ToList())
@@ -100,7 +100,7 @@ namespace CourterClient.Gui.Gui.UserWindow
                                             if (item2.id == CourtId)
                                             {
                                                 court = item2;
-                                                MessageBox.Show($"Neue Buchung:\nDatum: {booking.Date}\nZeit: {time.Start.ToString()} - {time.End.ToString()}\nSpielfeld: {court.Name}", $"Buchung Erfolgreich");
+                                                MessageBox.Show($"Neue Buchung:\nDatum: {booking.Date}\nZeit: {time.Start.ToString()} - {time.End.ToString()}\nSpielfeld: {court.Name}", $"Buchung erfolgreich");
                                             }
                                         }
                                     }
@@ -108,14 +108,66 @@ namespace CourterClient.Gui.Gui.UserWindow
                             }
                         }
                     }
-                    IsOwnBooking = true;
+                    ButtonIsOwn(true);
                     ChangeState(true);
                 }
-                //else
-                //{
-                //    ChangeState(false);
-                //}
+                else if (IsOwnBooking && IsBooked)
+                {
+                    var bookedSlots = await CustomerClient.GetBookingsForDateAsync(Today);
 
+                    if (bookedSlots.Successful)
+                    {
+                        var result = bookedSlots.Result.ToList();
+
+                        var todaysBookings = new List<BookingOut>();
+
+                        foreach (var item in result)
+                        {
+                            if (item.Date == Today && item.CourtId == CourtId)
+                            {
+                                todaysBookings.Add(item);
+                            }
+                        }
+
+                        foreach (var item in todaysBookings)
+                        {
+                            if (item.TimeslotId == Id)
+                            {
+                                var root = App.AppHost.Services.GetRequiredService<ClientManager>();
+                                var publicClient = root.clientManager.MakePublicClient();
+                                var allTimeslots = await publicClient.GetTimeslotsAsync();
+                                var allCourts = await publicClient.GetCourtsAsync();
+
+                                TimeslotOut time;
+                                CourtOut court;
+                                if (allTimeslots.Result != null && allCourts.Result != null)
+                                {
+                                    foreach (var slotItem in allTimeslots.Result.ToList())
+                                    {
+                                        if (slotItem.id == Id)
+                                        {
+                                            time = slotItem;
+                                            foreach (var courtItem in allCourts.Result.ToList())
+                                            {
+                                                if (courtItem.id == CourtId)
+                                                {
+                                                    court = courtItem;
+                                                    var deletion = await CustomerClient.DeleteBookingAsync(item.Id);
+                                                    if (deletion.Successful)
+                                                    {
+                                                        MessageBox.Show($"Buchung gelöscht:\nDatum: {item.Date}\nZeit: {time.Start.ToString()} - {time.End.ToString()}\nSpielfeld: {court.Name}", $"Buchung storniert");
+                                                        ButtonIsOwn(false);
+                                                        ChangeState(false);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             });
         }
 
@@ -124,7 +176,6 @@ namespace CourterClient.Gui.Gui.UserWindow
             SolidColorBrush green = (SolidColorBrush)new BrushConverter().ConvertFromString("#6f916f");
             SolidColorBrush red = (SolidColorBrush)new BrushConverter().ConvertFromString("#EE5C42");
             SolidColorBrush blue = (SolidColorBrush)new BrushConverter().ConvertFromString("#5F9EA0");
-            //Set state needs to disable buttons which timeslots are in the past.
 
             if (IsOwnBooking)
             {
@@ -152,7 +203,7 @@ namespace CourterClient.Gui.Gui.UserWindow
 
         public void ChangeState(bool booking)
         {
-            IsBooked = booking;
+            ButtonIsBooked(booking);
 
             SetState();
         }

@@ -255,8 +255,18 @@
             </Border>
         </DataTemplate>
 
-        <DataTemplate x:Key="BookingButton" DataType="{x:Type templates:SlotButton}">
-            <templates:SlotButton />
+        <DataTemplate x:Key="BookingButton">
+            <Button
+                Uid="{Binding Path=Id}"
+                Height="30"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Stretch"
+                Background="{Binding Path=BackgroundColor}"
+                BorderThickness="0"
+                IsEnabled="{Binding Path=EnableButton}"
+                Command="{Binding Path=BookingButtonClicked}"/>
         </DataTemplate>
 
         <DataTemplate x:Key="CourtSlotsTemplate">

@@ -9,14 +9,16 @@ using System.Threading.Tasks;
 
 namespace CourterClient.Gui.Gui.UserWindow
 {
-    class UserViewModel : ViewModelBase
+    public class UserViewModel : ViewModelBase
     {
         public TransferDate delegateTransfer;
-        private ClientManager ClientManager { get; set; }
-        private IPublicClient publicClient { get; set; }
+        public IPublicClient PublicClient { get; set; }
+        public IEmployeeClient? EmployeeClient { get; set; }
+        public ICustomerClient? CustomerClient { get; set; }
+
         private ObservableCollection<TimeSlot> timeSlots = new ObservableCollection<TimeSlot>();
         private ObservableCollection<CourtDefinition> courts = new ObservableCollection<CourtDefinition>();
-        private int Slots = 0;
+        public List<TimeSlot> Slots;
 
         public DateManager DateManager { get; set; }    
 
@@ -46,22 +48,51 @@ namespace CourterClient.Gui.Gui.UserWindow
             }
         }
 
-        public UserViewModel(ClientManager rootClient)
+        public UserViewModel(IPublicClient publicClient, IEmployeeClient employeeClient)
         {
-            ClientManager = rootClient;
-            publicClient = ClientManager.clientManager.MakePublicClient();
+            PublicClient = publicClient;
+            EmployeeClient = employeeClient;
 
             DateManager = new DateManager();
             delegateTransfer += new TransferDate(SetCurrentDate);
 
-            SetNextDay = new DelegateCommand((o) =>
+            SetNextDay = new DelegateCommand(async (o) =>
             {
                 DateManager.SetDate(DateManager.Next);
+                await CreateCourtTable();
             });
 
-            SetPreviousDay = new DelegateCommand((o) =>
+            SetPreviousDay = new DelegateCommand(async (o) =>
             {
                 DateManager.SetDate(DateManager.Previous);
+                await CreateCourtTable();
+            });
+
+            OpenCalendar = new DelegateCommand((o) =>
+            {
+                var cal = new CalendarView(delegateTransfer);
+                cal.ShowDialog();
+            });
+        }
+
+        public UserViewModel(IPublicClient publicClient, ICustomerClient customerClient)
+        {
+            PublicClient = publicClient;
+            CustomerClient = customerClient;
+
+            DateManager = new DateManager();
+            delegateTransfer += new TransferDate(SetCurrentDate);
+
+            SetNextDay = new DelegateCommand(async (o) =>
+            {
+                DateManager.SetDate(DateManager.Next);
+                await CreateCourtTable();
+            });
+
+            SetPreviousDay = new DelegateCommand(async (o) =>
+            {
+                DateManager.SetDate(DateManager.Previous);
+                await CreateCourtTable();
             });
 
             OpenCalendar = new DelegateCommand((o) =>
@@ -73,21 +104,22 @@ namespace CourterClient.Gui.Gui.UserWindow
 
         public async Task CreateTimeTable()
         {
-            var remoteTimeslots = await publicClient.GetTimeslotsAsync();
+            var remoteTimeslots = await PublicClient.GetTimeslotsAsync();
 
             if(remoteTimeslots.Successful)
             {
                 List<TimeslotOut> remoteTimeslotList = remoteTimeslots.Result.ToList();
+                Slots = new List<TimeSlot>();
                 this.TimeSlots = new ObservableCollection<TimeSlot>();
                 {
-                    this.TimeSlots.Add(new TimeSlot("", ""));
+                    this.TimeSlots.Add(new TimeSlot());
                     foreach (var time in remoteTimeslotList)
                     {
                         string start = $"{Convert.ToString(time.Start)}";
                         string end = $"{Convert.ToString(time.End)}";
-                        var item = new TimeSlot(start, end);
+                        var item = new TimeSlot(start, end, time.id);
+                        this.Slots.Add(item);
                         this.TimeSlots.Add(item);
-                        this.Slots++;
                     }
                 }
             }
@@ -95,16 +127,26 @@ namespace CourterClient.Gui.Gui.UserWindow
 
         public async Task CreateCourtTable()
         {
-            var remoteCourts = await publicClient.GetCourtsAsync();
-            if(remoteCourts.Successful)
+            var remoteCourts = await PublicClient.GetCourtsAsync();
+
+            if (remoteCourts.Successful)
             {
                 List<CourtOut> remoteCourtList = remoteCourts.Result.ToList();
+
                 this.Courts = new ObservableCollection<CourtDefinition>();
                 {
                     foreach (var court in remoteCourtList)
                     {
-                        var item = new CourtDefinition(court.Name, Slots);
-                        this.Courts.Add(item);
+                        if(EmployeeClient != null)
+                        {
+                            var item = new EmployeeCourtDefinition(EmployeeClient, court.Name, court.id, Slots, DateManager.Current);
+                            this.Courts.Add(item);
+                        }
+                        else if(CustomerClient != null)
+                        {
+                            var item = new CustomerCourtDefinition(CustomerClient, court.Name, court.id, Slots, DateManager.Current);
+                            this.Courts.Add(item);
+                        }
                     }
                 }
             }

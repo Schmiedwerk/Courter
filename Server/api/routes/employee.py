@@ -24,16 +24,17 @@ ROUTER = APIRouter(
 )
 
 
-@ROUTER.get('/bookings/{date}', response_model=list[BookingOut])
+@ROUTER.get('/bookings/{date}')
 async def get_bookings_for_date(date: datetime.date,
-                                session: AsyncSession = Depends(get_session)) -> list[Booking]:
+                                session: AsyncSession = Depends(get_session)) -> list[BookingOut]:
     bookings = await Booking.get_filtered(session, date=date)
-    return list(bookings)
+    return list(BookingOut.from_orm(booking) for booking in bookings)
 
 
-@ROUTER.post('/bookings', status_code=status.HTTP_201_CREATED, response_model=BookingOut)
-async def add_guest_booking(booking: GuestBookingIn, session: AsyncSession = Depends(get_session)) -> Booking:
-    return await BookingCreator(booking).create(session)
+@ROUTER.post('/bookings', status_code=status.HTTP_201_CREATED)
+async def add_guest_booking(booking: GuestBookingIn, session: AsyncSession = Depends(get_session)) -> BookingOut:
+    new_booking = await BookingCreator(booking).create(session)
+    return BookingOut.from_orm(new_booking)
 
 
 @ROUTER.delete('/bookings/{booking_id}')
@@ -46,16 +47,17 @@ async def delete_guest_booking(booking_id: int, session: AsyncSession = Depends(
     await manager.delete(session)
 
 
-@ROUTER.get('/closings/{date}', response_model=list[ClosingOut])
+@ROUTER.get('/closings/{date}')
 async def get_closings_for_date(date: datetime.date,
-                                session: AsyncSession = Depends(get_session)) -> list[Closing]:
+                                session: AsyncSession = Depends(get_session)) -> list[ClosingOut]:
     closings = await Closing.get_filtered(session, date=date)
-    return list(closings)
+    return list(ClosingOut.from_orm(closing) for closing in closings)
 
 
-@ROUTER.post('/closings', status_code=status.HTTP_201_CREATED, response_model=ClosingOut)
-async def add_closing(closing: ClosingIn, session: AsyncSession = Depends(get_session)) -> Closing:
-    return await ClosingCreator(closing).create(session)
+@ROUTER.post('/closings', status_code=status.HTTP_201_CREATED)
+async def add_closing(closing: ClosingIn, session: AsyncSession = Depends(get_session)) -> ClosingOut:
+    new_closing = await ClosingCreator(closing).create(session)
+    return ClosingOut.from_orm(new_closing)
 
 
 @ROUTER.delete('/closings/{closing_id}')

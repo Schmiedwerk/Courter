@@ -102,13 +102,14 @@ namespace CourterClient.Gui.Gui
 
         public void SetDate(DateOnly date)
         {
-            this.Current = date;
-            this.Previous = date.AddDays(-1);
-            this.Next = date.AddDays(1);
+            var de = new CultureInfo("de-DE");
+            Current = date;
+            Previous = date.AddDays(-1);
+            Next = date.AddDays(1);
 
-            this.CurrentToString = $"{Current.DayOfWeek}, {Current.ToString("d MMM")}";
-            this.PreviousToString = $"{Previous.DayOfWeek}, {Previous.ToString("d MMM")}";
-            this.NextToString = $"{Next.DayOfWeek}, {Next.ToString("d MMM")}";
+            CurrentToString = $"{de.DateTimeFormat.GetDayName(Current.DayOfWeek)}, {Current.ToString("d MMM")}";
+            PreviousToString = $"{de.DateTimeFormat.GetDayName(Previous.DayOfWeek)}, {Previous.ToString("d MMM")}";
+            NextToString = $"{de.DateTimeFormat.GetDayName(Next.DayOfWeek)}, {Next.ToString("d MMM")}";
         }
     }
 }

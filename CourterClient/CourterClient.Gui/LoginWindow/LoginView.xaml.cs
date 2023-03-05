@@ -5,19 +5,9 @@ using CourterClient.Gui.Gui.UserWindow;
 using CourterClient.Gui.RegistrationWindow;
 using CourterClient.Gui.UserWindow;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace CourterClient.Gui.LoginWindow
 {
@@ -93,28 +83,40 @@ namespace CourterClient.Gui.LoginWindow
 
                 if (response.Successful)
                 {
-                    if(response.Result == UserRole.Customer)
+                    var publicClient =  rootClient.clientManager.MakePublicClient();
+                    if (response.Result == UserRole.Customer)
                     {
-                        var userVm = new UserViewModel(rootClient);
+                        var customerClient = rootClient.clientManager.MakeCustomerClient();
+                        var userVm = new UserViewModel(publicClient, customerClient);
                         var UserWin = new UserView();
-                        UserWin.DataContext = userVm;
 
                         await userVm.CreateTimeTable();
 
                         await userVm.CreateCourtTable();
+                        UserWin.DataContext = userVm;
 
                         this.Close();
                         UserWin.ShowDialog();
                     }
                     else if(response.Result == UserRole.Employee)
                     {
+                        var employeeClient = rootClient.clientManager.MakeEmployeeClient();
+                        var userVm = new UserViewModel(publicClient, employeeClient);
                         var UserWin = new UserView();
+
+                        await userVm.CreateTimeTable();
+
+                        await userVm.CreateCourtTable();
+                        UserWin.DataContext = userVm;
+
                         this.Close();
                         UserWin.ShowDialog();
                     }
                     else if(response.Result == UserRole.Admin)
                     {
-                        var adminVm = new AdminViewModel(rootClient);
+                        var adminClient = rootClient.clientManager.MakeAdminClient();
+                        
+                        var adminVm = new AdminViewModel(publicClient, adminClient);
                         var adminWin = new AdminView();
                         adminWin.DataContext= adminVm;
                         

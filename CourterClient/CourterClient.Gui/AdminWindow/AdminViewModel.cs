@@ -20,9 +20,8 @@ namespace CourterClient.Gui.Gui.AdminWindow
         public TransferCourtIn courtTransfer;
         public TransferTimeslotIn timeslotTransfer;
 
-        private ClientManager ClientManager {get; set;}
-        private IAdminClient adminClient { get; set;}
-        private IPublicClient publicClient { get; set;}
+        private IAdminClient AdminClient { get; set;}
+        private IPublicClient PublicClient { get; set;}
 
         private UserOut currentAdmin;
         private UserOut currentEmployee;
@@ -157,7 +156,7 @@ namespace CourterClient.Gui.Gui.AdminWindow
 
             if (user != null)
             {
-                var response = await adminClient.DeleteEmployeeAsync(user.Id);
+                var response = await AdminClient.DeleteEmployeeAsync(user.Id);
             }
 
             await GetEmployees();
@@ -180,7 +179,7 @@ namespace CourterClient.Gui.Gui.AdminWindow
 
             if (user != null)
             {
-                var response = await adminClient.DeleteAdminAsync(user.Id);
+                var response = await AdminClient.DeleteAdminAsync(user.Id);
             }
 
             await GetAdmins();
@@ -192,7 +191,7 @@ namespace CourterClient.Gui.Gui.AdminWindow
 
             if(court != null )
             {
-                var response = await adminClient.DeleteCourtAsync(court.id);
+                var response = await AdminClient.DeleteCourtAsync(court.id);
             }
             await GetCourts();
         });
@@ -203,16 +202,15 @@ namespace CourterClient.Gui.Gui.AdminWindow
 
             if (slot != null)
             {
-                var response = await adminClient.DeleteTimeslotAsync(slot.id);
+                var response = await AdminClient.DeleteTimeslotAsync(slot.id);
             }
             await GetTimeslots();
         });
 
-        public AdminViewModel(ClientManager rootClient)
+        public AdminViewModel(IPublicClient publicClient, IAdminClient adminClient)
         {
-            ClientManager = rootClient;
-            adminClient = ClientManager.clientManager.MakeAdminClient();
-            publicClient = ClientManager.clientManager.MakePublicClient();
+            PublicClient = publicClient;
+            AdminClient = adminClient;
 
             this.adminTransfer += new TransferAdminCredentials(CreateAdmin);
             this.employeeTransfer += new TransferEmployeeCredentials(CreateEmployee);
@@ -232,7 +230,7 @@ namespace CourterClient.Gui.Gui.AdminWindow
 
         public async Task GetAdmins()
         {
-            var adminList = await adminClient.GetAdminsAsync();
+            var adminList = await AdminClient.GetAdminsAsync();
 
             if(adminList.Successful)
             {
@@ -248,7 +246,7 @@ namespace CourterClient.Gui.Gui.AdminWindow
 
         public async Task GetEmployees()
         {
-            var employeeList = await adminClient.GetEmployeesAsync();
+            var employeeList = await AdminClient.GetEmployeesAsync();
 
             if (employeeList.Successful)
             {
@@ -264,7 +262,7 @@ namespace CourterClient.Gui.Gui.AdminWindow
 
         public async Task GetCourts()
         {
-            var courtList = await publicClient.GetCourtsAsync();
+            var courtList = await PublicClient.GetCourtsAsync();
 
             if (courtList.Successful)
             {
@@ -280,7 +278,7 @@ namespace CourterClient.Gui.Gui.AdminWindow
 
         public async Task GetTimeslots()
         {
-            var timeslotList = await publicClient.GetTimeslotsAsync();
+            var timeslotList = await PublicClient.GetTimeslotsAsync();
 
             if (timeslotList.Successful)
             {
@@ -296,7 +294,7 @@ namespace CourterClient.Gui.Gui.AdminWindow
 
         public async void CreateAdmin(Credentials user)
         {
-            var response = await adminClient.AddAdminAsync(user);
+            var response = await AdminClient.AddAdminAsync(user);
 
             if(response.Successful)
             {
@@ -312,7 +310,7 @@ namespace CourterClient.Gui.Gui.AdminWindow
 
         public async void CreateEmployee(Credentials user)
         {
-            var response = await adminClient.AddEmployeeAsync(user);
+            var response = await AdminClient.AddEmployeeAsync(user);
 
             if (response.Successful)
             {
@@ -328,7 +326,7 @@ namespace CourterClient.Gui.Gui.AdminWindow
 
         public async void CreateCourt(CourtIn court)
         {
-            var response = await adminClient.AddCourtAsync(court);
+            var response = await AdminClient.AddCourtAsync(court);
 
             if(response.Successful)
             {
@@ -340,7 +338,7 @@ namespace CourterClient.Gui.Gui.AdminWindow
 
         public async void CreateTimeslot(TimeslotIn timeslot)
         {
-            var response = await adminClient.AddTimeslotAsync(timeslot);
+            var response = await AdminClient.AddTimeslotAsync(timeslot);
 
             if (response.Successful)
             {

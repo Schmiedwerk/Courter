@@ -58,16 +58,6 @@
       <XamlRuntime></XamlRuntime>
       <SubType></SubType>
     </Page>
-    <Page Update="MainWindow.xaml">
-      <Generator></Generator>
-      <XamlRuntime></XamlRuntime>
-      <SubType></SubType>
-    </Page>
-    <Page Update="BookingWindow.xaml">
-      <Generator></Generator>
-      <XamlRuntime></XamlRuntime>
-      <SubType></SubType>
-    </Page>
     <Page Update="CalendarWindow\CalendarView.xaml">
       <Generator></Generator>
       <XamlRuntime></XamlRuntime>

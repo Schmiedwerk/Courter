@@ -23,9 +23,6 @@
     <Compile Update="RegistrationWindow\RegistrationView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="UserWindow\SlotButton.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Update="UserWindow\UserView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -50,9 +47,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="RegistrationWindow\RegistrationView.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Update="UserWindow\SlotButton.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UserWindow\UserView.xaml">

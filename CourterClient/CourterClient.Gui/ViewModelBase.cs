@@ -16,6 +16,11 @@ namespace CourterClient.Gui
     public delegate void TransferCourtIn(CourtIn court);
     public delegate void TransferTimeslotIn(TimeslotIn timeslot);
 
+    public delegate void TransferGuestBooking(GuestBookingIn guestBooking);
+    public delegate void TransferClosing(ClosingIn closing);
+
+    public delegate Task TransferCourtDefinitionTrigger();
+
     public abstract class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;

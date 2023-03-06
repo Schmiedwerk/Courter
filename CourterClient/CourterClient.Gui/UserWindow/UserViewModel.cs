@@ -1,5 +1,7 @@
 ﻿using CourterClient.ApiClient;
 using CourterClient.Gui.CalendarWindow;
+using CourterClient.Gui.Gui.UserWindow.Customer;
+using CourterClient.Gui.Gui.UserWindow.Employee;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;

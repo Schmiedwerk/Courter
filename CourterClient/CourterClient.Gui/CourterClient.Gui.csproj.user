@@ -23,6 +23,9 @@
     <Compile Update="RegistrationWindow\RegistrationView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="UserWindow\Employee\EmployeePopUpView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="UserWindow\UserView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -47,6 +50,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="RegistrationWindow\RegistrationView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="UserWindow\Employee\EmployeePopUpView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="UserWindow\UserView.xaml">

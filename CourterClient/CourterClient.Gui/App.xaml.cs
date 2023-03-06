@@ -2,6 +2,7 @@
 using CourterClient.Gui.Gui;
 using CourterClient.Gui.Gui.AdminWindow;
 using CourterClient.Gui.Gui.UserWindow;
+using CourterClient.Gui.Gui.UserWindow.Employee;
 using CourterClient.Gui.LoginWindow;
 using CourterClient.Gui.RegistrationWindow;
 using CourterClient.Gui.UserWindow;
@@ -30,6 +31,8 @@ namespace CourterClient.Gui
                     services.AddSingleton<UserViewModel>();
                     services.AddSingleton<CalendarView>();
                     services.AddSingleton<AdminView>();
+                    services.AddSingleton<EmployeePopUpView>();
+                    services.AddSingleton<EmployeeCourtDefinition>();
                     services.AddTransient<ClientManager>();
                 })
                 .Build();

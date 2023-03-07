@@ -1,0 +1,111 @@
+﻿<Window x:Class="CourterClient.Gui.Gui.UserWindow.EmployeePopUpView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CourterClient.Gui.Gui.UserWindow" 
+        xmlns:employee="clr-namespace:CourterClient.Gui.Gui.UserWindow.Employee" 
+        d:DataContext="{d:DesignInstance Type=employee:EmployeePopUpViewModel}"
+        mc:Ignorable="d"
+        Title="Mitarbeiterfenster" 
+        Width="300"
+        Height="350"
+        AllowsTransparency="True"
+        Background="Transparent"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None">
+        <Grid>
+            <Image
+                Grid.Column="1"
+                Panel.ZIndex="1"
+                Height="20"
+                Width="20"
+                MouseUp="Image_MouseUp"
+                Source="/Logos/SchließenGrau.png"
+                Style="{StaticResource imgClose}" />
+                <Border
+                Background="White"
+                CornerRadius="20 20 20 20"
+                MouseDown="Border_MouseDown"
+                BorderThickness="3"
+                BorderBrush="#6f916f">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="40" />
+                        <RowDefinition Height="240" />
+                        <RowDefinition Height="70" />
+                    </Grid.RowDefinitions>
+                <TabControl Grid.Row="1" Margin="5">
+                    <TabControl.Resources>
+                        <Style TargetType="{x:Type TabPanel}">
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                        </Style>
+                    </TabControl.Resources>
+                    <TabItem Header="Gastbuchung" Width="140">
+                        <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.3*"/>
+                                    <ColumnDefinition Width="0.7*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="50"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Column="0" Grid.Row="0" Text="Gastname:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBox x:Name="GuestnameInput" Grid.Column="1" Grid.Row="0" Text="{Binding Guestname}" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="180" Height="30"/>
+                                <TextBlock Grid.Column="0" Grid.Row="1" Text="Datum:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Today, StringFormat=d, ConverterCulture=de-DE}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="0" Grid.Row="2" Text="Spielfeld:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding CourtName}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="0" Grid.Row="3" Text="Von:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding StartTime}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="0" Grid.Row="4" Text="Bis:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding EndTime}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <Button Grid.ColumnSpan="2" Grid.Row="5" Style="{StaticResource calAcceptButton}" Command="{Binding SetGuestbooking}" Content="Buchen" Margin="0 5 0 0"/>
+                            </Grid>
+                        </StackPanel>
+                    </TabItem>
+                    <TabItem Header="Feld sperren"  Width="140">
+                        <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.3*"/>
+                                    <ColumnDefinition Width="0.7*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="35"/>
+                                    <RowDefinition Height="35"/>
+                                    <RowDefinition Height="35"/>
+                                    <RowDefinition Height="35"/>
+                                    <RowDefinition Height="60"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Column="0" Grid.Row="0" Text="Datum:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Today, StringFormat=d, ConverterCulture=de-DE}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="0" Grid.Row="1" Text="Spielfeld:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding CourtName}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="0" Grid.Row="2" Text="Von:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding StartTime}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="0" Grid.Row="3" Text="Bis:" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <ComboBox ItemsSource="{Binding EndsList}" Grid.Column="1" Grid.Row="3" SelectedIndex="{Binding SelectedEnd}" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" 
+                                          VerticalContentAlignment="Center" Width="180" Height="30">
+
+                                </ComboBox>
+                                <Button Grid.ColumnSpan="2" Grid.Row="4" Style="{StaticResource calAcceptButton}" Command="{Binding SetClosing}" Content="Feld sperren" Margin="0 15 0 0" />
+                            </Grid>
+                        </StackPanel>
+                    </TabItem>
+                </TabControl>
+                <Button
+                    Grid.Row="2"
+                    Margin="10 15"
+                    Content="Abbrechen"
+                    Style="{StaticResource calDeclineButton}" Click="Close_Click"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

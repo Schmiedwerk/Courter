@@ -163,6 +163,45 @@
             </Style.Triggers>
         </Style>
 
+        <Style x:Key="calDeclineButton" TargetType="Button">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Width" Value="150" />
+            <Setter Property="Background" Value="#EE5C42" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="BorderBrush" Value="White" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="15">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderThickness" Value="2" />
+                    <Setter Property="BorderBrush" Value="#EE5C42" />
+                    <Setter Property="Background" Value="#EE5C42" />
+                    <Setter Property="Background" Value="White" />
+                    <Setter Property="Foreground" Value="#EE5C42" />
+                </Trigger>
+                <Trigger Property="IsMouseCaptured" Value="True">
+                    <Setter Property="BorderThickness" Value="2" />
+                    <Setter Property="BorderBrush" Value="#EE5C42" />
+                    <Setter Property="Background" Value="#EE5C42" />
+                    <Setter Property="Background" Value="White" />
+                    <Setter Property="Foreground" Value="#EE5C42" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
         <Style x:Key="calButton" TargetType="Button">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
@@ -261,11 +300,14 @@
                 Height="30"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
-                HorizontalContentAlignment="Stretch"
-                VerticalContentAlignment="Stretch"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                FontSize="16"
+                Foreground="White"
                 Background="{Binding Path=BackgroundColor}"
                 BorderThickness="0"
                 IsEnabled="{Binding Path=EnableButton}"
+                Content="{Binding Path=GuestName}"
                 Command="{Binding Path=BookingButtonClicked}"/>
         </DataTemplate>
 

@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Automation.Peers;
 
-namespace CourterClient.Gui.Gui.UserWindow
+namespace CourterClient.Gui.Gui.UserWindow.Customer
 {
     public class CustomerCourtDefinition : CourtDefinition
     {
         ICustomerClient CustomerClient { get; set; }
-        public CustomerCourtDefinition(ICustomerClient customerClient, string courtName, int id, List<TimeSlot> slots, DateOnly current) 
+        public CustomerCourtDefinition(ICustomerClient customerClient, string courtName, int id, List<TimeSlot> slots, DateOnly current)
             : base(courtName, id, slots, current)
         {
             CustomerClient = customerClient;
@@ -23,7 +23,7 @@ namespace CourterClient.Gui.Gui.UserWindow
             FillCourtSlots();
         }
 
-        public async Task FillCourtSlots()
+        public override async Task FillCourtSlots()
         {
             SlotList = new ObservableCollection<SlotButtonData>();
             var bookedSlots = await CustomerClient.GetBookingsForDateAsync(Today);
@@ -34,16 +34,16 @@ namespace CourterClient.Gui.Gui.UserWindow
             var publicClient = root.clientManager.MakePublicClient();
             var allTimeslots = await publicClient.GetTimeslotsAsync();
 
-  
+
             if (bookedSlots.Successful)
             {
                 var result = bookedSlots.Result.ToList();
 
                 var todaysBookings = new List<BookingOut>();
 
-                foreach(var item in result)
+                foreach (var item in result)
                 {
-                    if(item.Date == Today && item.CourtId == CourtId)
+                    if (item.Date == Today && item.CourtId == CourtId)
                     {
                         todaysBookings.Add(item);
                     }
@@ -53,8 +53,8 @@ namespace CourterClient.Gui.Gui.UserWindow
                 {
                     TimeSlot slot = Slots[i];
 
-                    var button = new SlotButtonData((int)slot.Id, false, false, CourtName, CourtId, CustomerClient, Today);
-                    button = IsBookingPast(button, allTimeslots, timeNow);
+                    var button = new CustomerSlotButton(CustomerClient, (int)slot.Id, false, false, CourtName, CourtId, Today);
+                    button = (CustomerSlotButton)IsBookingPast(button, allTimeslots, timeNow);
 
                     foreach (var item in todaysBookings)
                     {
@@ -62,10 +62,10 @@ namespace CourterClient.Gui.Gui.UserWindow
                         {
                             if (item.CustomerId != null)
                             {
-                                button.ButtonIsBooked(true);
-                                button.ButtonIsOwn(true);
+                                button.IsBooked = true;
+                                button.IsOwnBooking = true;
                             }
-                            button.ButtonIsBooked(true);
+                            button.IsBooked = true;
                         }
 
                     }

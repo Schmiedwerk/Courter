@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CourterClient.Gui.Gui.UserWindow
 {
-    public class CourtDefinition : ViewModelBase
+    public abstract class CourtDefinition : ViewModelBase
     {
         public string CourtName { get; set; }
         public int CourtId { get; set; }
@@ -38,6 +38,8 @@ namespace CourterClient.Gui.Gui.UserWindow
             Today = current;
         }
 
+        public abstract Task FillCourtSlots();
+
         public SlotButtonData IsBookingPast(SlotButtonData button, ApiResponse<IEnumerable<TimeslotOut>> allTimeslots, DateTime timeNow)
         {
             if (allTimeslots.Result != null)
@@ -47,16 +49,16 @@ namespace CourterClient.Gui.Gui.UserWindow
                 {
                     if (Today == DateOnly.FromDateTime(timeNow) && TimeOnly.FromDateTime(timeNow) > item.Start)
                     {
-                        if (item.id == button.Id)
+                        if (item.id == button.SlotId)
                         {
-                            button.IsButtonEnabled(false);
+                            button.EnableButton = false;
                         }
                     }
                     else if (Today < DateOnly.FromDateTime(timeNow))
                     {
-                        if (item.id == button.Id)
+                        if (item.id == button.SlotId)
                         {
-                            button.IsButtonEnabled(false);
+                            button.EnableButton = false;
                         }
                     }
                 }

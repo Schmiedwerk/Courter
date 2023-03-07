@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import datetime
 
 from ..db.access import get_session
-from ..db.models import Employee, Booking, Closing
+from ..db.models import Employee, Booking
 
 from ..administration.bookings import BookingCreator, BookingManager
 from ..administration.closings import ClosingCreator, ClosingManager
@@ -45,13 +45,6 @@ async def delete_guest_booking(booking_id: int, session: AsyncSession = Depends(
         raise bad_request(f'booking with id {booking_id} is not a guest booking')
 
     await manager.delete(session)
-
-
-@ROUTER.get('/closings/{date}')
-async def get_closings_for_date(date: datetime.date,
-                                session: AsyncSession = Depends(get_session)) -> list[ClosingOut]:
-    closings = await Closing.get_filtered(session, date=date)
-    return list(ClosingOut.from_orm(closing) for closing in closings)
 
 
 @ROUTER.post('/closings', status_code=status.HTTP_201_CREATED)

@@ -8,7 +8,6 @@ namespace CourterClient.ApiClient;
 
 public class RootClient
 {
-    // TODO: move this elsewhere?
     private const string _dateFormat = "yyyy-MM-dd";
 
     private readonly string _apiUrl;
@@ -54,7 +53,7 @@ public class RootClient
 
     public IPublicClient MakePublicClient()
     {
-        return new DefaultPublicClient(_apiUrl.AppendPathSegment("public"));
+        return new DefaultPublicClient(_apiUrl.AppendPathSegment("public"), _dateFormat);
     }
 
     public IAccountClient MakeAccountClient()

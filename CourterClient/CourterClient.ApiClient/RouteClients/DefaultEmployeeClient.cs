@@ -14,11 +14,11 @@ internal class DefaultEmployeeClient : IEmployeeClient
 
 	public DefaultEmployeeClient(string routeUrl, string accessToken, string dateFormat)
 	{
-        _dateFormat = dateFormat;
         _getter = new ResourceGetter(routeUrl, accessToken);
         _adder = new ResourceAdder(routeUrl, accessToken);
         _deleter = new ResourceDeleter(routeUrl, accessToken);
-	}
+        _dateFormat = dateFormat;
+    }
 
     public async Task<ApiResponse<IEnumerable<BookingOut>>> GetBookingsForDateAsync(DateOnly date)
     {
@@ -33,11 +33,6 @@ internal class DefaultEmployeeClient : IEmployeeClient
     public async Task<ApiResponse> DeleteGuestBookingAsync(int id)
     {
         return await _deleter.DeleteAsync(_bookingsSubroute, id).ConfigureAwait(false);
-    }
-
-    public async Task<ApiResponse<IEnumerable<ClosingOut>>> GetClosingsForDateAsync(DateOnly date)
-    {
-        return await _getter.GetCollectionAsync<ClosingOut>(_closingsSubroute, date.ToString(_dateFormat)).ConfigureAwait(false);
     }
 
     public async Task<ApiResponse<ClosingOut>> AddClosingAsync(ClosingIn closing)

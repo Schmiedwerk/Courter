@@ -1,10 +1,12 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..db.access import get_session
-from ..db.models import Timeslot, Court
+import datetime
 
-from ..schemes import CourtOut, TimeslotOut
+from ..db.access import get_session
+from ..db.models import Timeslot, Court, Closing
+
+from ..schemes import CourtOut, TimeslotOut, ClosingOut
 
 
 ROUTER = APIRouter(prefix='/public', tags=['public'])
@@ -20,3 +22,10 @@ async def get_courts(session: AsyncSession = Depends(get_session)) -> list[Court
 async def get_timeslots(session: AsyncSession = Depends(get_session)) -> list[Timeslot]:
     timeslots = await Timeslot.get_all(session)
     return list(timeslots)
+
+
+@ROUTER.get('/closings/{date}')
+async def get_closings_for_date(date: datetime.date,
+                                session: AsyncSession = Depends(get_session)) -> list[ClosingOut]:
+    closings = await Closing.get_filtered(session, date=date)
+    return list(ClosingOut.from_orm(closing) for closing in closings)

@@ -26,6 +26,8 @@
             Style="{StaticResource imgClose}" />
         <Border
             Background="White"
+            BorderBrush="#6f916f"
+            BorderThickness="3"
             CornerRadius="20 20 20 20"
             MouseDown="Border_MouseDown">
             <Grid>

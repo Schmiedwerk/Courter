@@ -49,7 +49,7 @@ namespace CourterClient.Gui.Gui.AdminWindow
             }
             else if(HardSelector.IsChecked == true)
             {
-                selectedSurface = "Hardbelag";
+                selectedSurface = "Hartbelag";
                 GrassSelector.IsChecked = false;
                 CarpetSelector.IsChecked = false;
                 SandSelector.IsChecked = false;

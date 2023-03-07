@@ -4,15 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Security.RightsManagement;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Automation.Peers;
+using System.Windows.Documents;
 
 namespace CourterClient.Gui.Gui.UserWindow.Employee
 {
     public class EmployeePopUpViewModel : ViewModelBase
     {
+        private IEmployeeClient EmployeeClient { get; set; }
         private TransferGuestBooking transferGuestbooking;
         private TransferClosing transferClosing;
 
@@ -95,8 +93,9 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
             }
         }
 
-        public EmployeePopUpViewModel(TransferGuestBooking guest, TransferClosing closing, DateOnly current, string courtname, int courtid, int slotId)
+        public EmployeePopUpViewModel(IEmployeeClient employeeClient ,TransferGuestBooking guest, TransferClosing closing, DateOnly current, string courtname, int courtid, int slotId)
         {
+            EmployeeClient = employeeClient;
             transferGuestbooking = guest;
             transferClosing = closing;
             Today = current;
@@ -134,40 +133,58 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
                             transferClosing.Invoke(newClosing);
                             break;
                         }
-
                     }
                 }
-
             });
         }
-
 
         private async void GetTimeSlots()
         {
             var root = App.AppHost.Services.GetRequiredService<ClientManager>();
             var publicClient = root.clientManager.MakePublicClient();
             var allTimeslots = await publicClient.GetTimeslotsAsync();
-            if (allTimeslots.Successful)
+            var bookingsToday = await EmployeeClient.GetBookingsForDateAsync(Today);
+
+            if (allTimeslots.Successful && bookingsToday.Successful)
             {
                 var slotList = allTimeslots.Result.ToList();
-                int index = 0;
+
                 foreach (var slot in slotList)
                 {
                     if (slot.id == SlotId)
                     {
                         StartTime = $"{slot.Start}";
                         EndTime = $"{slot.End}";
-                        for (int i = index + 1; i < slotList.Count; i++)
-                        {
-                            var cur = slotList[i];
 
-                            this.EndsList.Add(cur.End.ToString());
+                        BookingOut nextBooking = null;
+
+                        foreach (var booking in bookingsToday.Result.ToList()) 
+                        {
+                            if(booking.Date == Today && booking.CourtId == CourtId)
+                            {
+                                if (booking.TimeslotId >= SlotId)
+                                {
+                                    nextBooking = booking;
+                                }
+                            }
                         }
-                        break;
-                    }
-                    else
-                    {
-                        index += 1;
+                        for (int i = 0; i < slotList.Count; i++)
+                        {
+                            if (nextBooking != null)
+                            {
+                                if (slotList[i].id >= slot.id && slotList[i].id < nextBooking.TimeslotId)
+                                {
+                                    this.EndsList.Add(slotList[i].End.ToString());
+                                }
+                            }
+                            else
+                            {
+                                if (slotList[i].id >= slot.id)
+                                {
+                                    this.EndsList.Add(slotList[i].End.ToString());
+                                }
+                            }
+                        }
                     }
                 }
             }

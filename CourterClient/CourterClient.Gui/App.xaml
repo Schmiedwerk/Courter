@@ -302,13 +302,13 @@
                 VerticalAlignment="Stretch"
                 HorizontalContentAlignment="Center"
                 VerticalContentAlignment="Center"
-                FontSize="16"
-                Foreground="White"
                 Background="{Binding Path=BackgroundColor}"
                 BorderThickness="0"
-                IsEnabled="{Binding Path=EnableButton}"
+                Command="{Binding Path=BookingButtonClicked}"
                 Content="{Binding Path=GuestName}"
-                Command="{Binding Path=BookingButtonClicked}"/>
+                FontSize="16"
+                Foreground="White"
+                IsEnabled="{Binding Path=EnableButton}" />
         </DataTemplate>
 
         <DataTemplate x:Key="CourtSlotsTemplate">

@@ -93,8 +93,8 @@
             <Setter Property="FontSize" Value="14" />
             <Setter Property="Width" Value="200" />
             <Setter Property="Margin" Value="0,20,0,0" />
-            <Setter Property="Background" Value="#6f916f" />
-            <Setter Property="Foreground" Value="#fdfefe" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="#6f916f" />
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="Template">
                 <Setter.Value>
@@ -113,13 +113,13 @@
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#6f916f" />
-                    <Setter Property="Background" Value="White" />
-                    <Setter Property="Foreground" Value="#6f916f" />
+                    <Setter Property="Background" Value="#6f916f" />
+                    <Setter Property="Foreground" Value="White" />
                 </Trigger>
                 <Trigger Property="IsMouseCaptured" Value="True">
                     <Setter Property="Background" Value="#6f916f" />
-                    <Setter Property="Background" Value="White" />
-                    <Setter Property="Foreground" Value="#6f916f" />
+                    <Setter Property="Background" Value="#6f916f" />
+                    <Setter Property="Foreground" Value="White" />
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -168,7 +168,7 @@
             <Setter Property="Width" Value="150" />
             <Setter Property="Background" Value="#EE5C42" />
             <Setter Property="Foreground" Value="White" />
-            <Setter Property="BorderThickness" Value="2" />
+            <Setter Property="BorderThickness" Value="1" />
             <Setter Property="BorderBrush" Value="White" />
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
             <Setter Property="Template">
@@ -178,7 +178,7 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="15">
+                            CornerRadius="20">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </ControlTemplate>
@@ -261,7 +261,6 @@
             <Border
                 Width="120"
                 Height="30"
-                Background="White"
                 CornerRadius="2 2 2 2">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -273,21 +272,24 @@
                         Grid.Column="0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Foreground="#878787"
+                        Foreground="White"
+                        Background="Transparent"
                         Style="{StaticResource normalText}"
                         Text="{Binding Path=Start}" />
                     <TextBlock
                         Grid.Column="1"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Foreground="#878787"
+                        Foreground="White"
+                        Background="Transparent"
                         Style="{StaticResource normalText}"
                         Text="{Binding Path=Hyphen}" />
                     <TextBlock
                         Grid.Column="2"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Foreground="#878787"
+                        Foreground="White"
+                        Background="Transparent"
                         Style="{StaticResource normalText}"
                         Text="{Binding Path=End}" />
                 </Grid>
@@ -307,15 +309,15 @@
                 Command="{Binding Path=BookingButtonClicked}"
                 Content="{Binding Path=GuestName}"
                 FontSize="16"
-                Foreground="White"
-                IsEnabled="{Binding Path=EnableButton}" />
+                Foreground="White">
+            </Button>
         </DataTemplate>
 
         <DataTemplate x:Key="CourtSlotsTemplate">
             <Border
                 Width="150"
                 Height="auto"
-                Background="White"
+                Background="Transparent"
                 CornerRadius="2 2 2 2">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -326,13 +328,15 @@
                         Grid.Row="0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Foreground="#878787"
+                        Foreground="White"
+                        Background="Transparent"
                         IsEnabled="False"
                         Style="{StaticResource normalText}"
                         Text="{Binding Path=CourtName}" />
                     <ListBox
                         x:Name="SlotListBox"
                         Grid.Row="1"
+                        Background="Transparent"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"

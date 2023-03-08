@@ -19,7 +19,7 @@ namespace CourterClient.Gui.Gui.UserWindow.Customer
 
             BookingButtonClicked = new DelegateCommand(async _ =>
             {
-                if (!IsBooked && !IsClosing)
+                if (!IsBooked && !IsClosing && !IsPast)
                 {
                     CustomerBookingIn newBooking = new CustomerBookingIn(Today, SlotId, CourtId);
                     var response = await CustomerClient.AddBookingAsync(newBooking);
@@ -104,10 +104,10 @@ namespace CourterClient.Gui.Gui.UserWindow.Customer
 
         public override void SetState()
         {
-            SolidColorBrush green = (SolidColorBrush)new BrushConverter().ConvertFromString("#6f916f");
+            SolidColorBrush green = (SolidColorBrush)new BrushConverter().ConvertFromString("#2E8B57");
             SolidColorBrush red = (SolidColorBrush)new BrushConverter().ConvertFromString("#EE5C42");
-            SolidColorBrush blue = (SolidColorBrush)new BrushConverter().ConvertFromString("#5F9EA0");
-            SolidColorBrush grey = (SolidColorBrush)new BrushConverter().ConvertFromString("#808080");
+            SolidColorBrush blue = (SolidColorBrush)new BrushConverter().ConvertFromString("#1874CD");
+            SolidColorBrush past = (SolidColorBrush)new BrushConverter().ConvertFromString("Transparent");
 
             if (IsOwnBooking)
             {
@@ -122,7 +122,11 @@ namespace CourterClient.Gui.Gui.UserWindow.Customer
             }
             else if (IsClosing)
             {
-                BackgroundColor = grey;
+                BackgroundColor = red;
+            }
+            else if (IsPast)
+            {
+                BackgroundColor = past;
             }
             else
             {

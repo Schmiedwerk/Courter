@@ -25,24 +25,27 @@
             Source="/Logos/SchließenGrau.png"
             Style="{StaticResource imgClose}" />
         <Border
-            Background="White"
-            BorderBrush="#6f916f"
-            BorderThickness="3"
             CornerRadius="20 20 20 20"
             MouseDown="Border_MouseDown">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Offset="0" Color="#6f916f" />
+                    <GradientStop Offset="1" Color="#c8ab37" />
+                </LinearGradientBrush>
+            </Border.Background>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40" />
                     <RowDefinition Height="240" />
                     <RowDefinition Height="70" />
                 </Grid.RowDefinitions>
-                <TabControl Grid.Row="1" Margin="5">
+                <TabControl Grid.Row="1" Margin="5" Background="Transparent" Foreground="White">
                     <TabControl.Resources>
                         <Style TargetType="{x:Type TabPanel}">
                             <Setter Property="HorizontalAlignment" Value="Center" />
                         </Style>
                     </TabControl.Resources>
-                    <TabItem Width="140" Header="Gastbuchung">
+                    <TabItem Width="140" Header="Gastbuchung" Background="Transparent">
                         <StackPanel>
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -58,13 +61,16 @@
                                     <RowDefinition Height="50" />
                                 </Grid.RowDefinitions>
                                 <TextBlock
+                                    Foreground="White"
                                     Grid.Row="0"
                                     Grid.Column="0"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Text="Gastname:" />
                                 <TextBox
+                                    Foreground="White"
                                     x:Name="GuestnameInput"
+                                    Background="Transparent"
                                     Grid.Row="0"
                                     Grid.Column="1"
                                     Width="180"
@@ -75,48 +81,56 @@
                                     VerticalContentAlignment="Center"
                                     Text="{Binding Guestname}" />
                                 <TextBlock
+                                    Foreground="White"
                                     Grid.Row="1"
                                     Grid.Column="0"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Text="Datum:" />
                                 <TextBlock
+                                    Foreground="White"
                                     Grid.Row="1"
                                     Grid.Column="1"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Text="{Binding Today, StringFormat=d, ConverterCulture=de-DE}" />
                                 <TextBlock
+                                    Foreground="White"
                                     Grid.Row="2"
                                     Grid.Column="0"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Text="Spielfeld:" />
                                 <TextBlock
+                                    Foreground="White"
                                     Grid.Row="2"
                                     Grid.Column="1"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Text="{Binding CourtName}" />
                                 <TextBlock
+                                    Foreground="White"
                                     Grid.Row="3"
                                     Grid.Column="0"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Text="Von:" />
                                 <TextBlock
+                                    Foreground="White"
                                     Grid.Row="3"
                                     Grid.Column="1"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Text="{Binding StartTime}" />
                                 <TextBlock
+                                    Foreground="White"
                                     Grid.Row="4"
                                     Grid.Column="0"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Text="Bis:" />
                                 <TextBlock
+                                    Foreground="White"
                                     Grid.Row="4"
                                     Grid.Column="1"
                                     HorizontalAlignment="Center"
@@ -125,14 +139,14 @@
                                 <Button
                                     Grid.Row="5"
                                     Grid.ColumnSpan="2"
-                                    Margin="0,5,0,0"
+                                    Margin="1"
                                     Command="{Binding SetGuestbooking}"
                                     Content="Buchen"
-                                    Style="{StaticResource calAcceptButton}" />
+                                    Style="{StaticResource button}" />
                             </Grid>
                         </StackPanel>
                     </TabItem>
-                    <TabItem Width="140" Header="Feld sperren">
+                    <TabItem Width="140" Header="Feld sperren" Background="Transparent">
                         <StackPanel>
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -147,42 +161,49 @@
                                     <RowDefinition Height="60" />
                                 </Grid.RowDefinitions>
                                 <TextBlock
+                                    Foreground="White"
                                     Grid.Row="0"
                                     Grid.Column="0"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Text="Datum:" />
                                 <TextBlock
+                                    Foreground="White"
                                     Grid.Row="0"
                                     Grid.Column="1"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Text="{Binding Today, StringFormat=d, ConverterCulture=de-DE}" />
                                 <TextBlock
+                                    Foreground="White"
                                     Grid.Row="1"
                                     Grid.Column="0"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Text="Spielfeld:" />
                                 <TextBlock
+                                    Foreground="White"
                                     Grid.Row="1"
                                     Grid.Column="1"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Text="{Binding CourtName}" />
                                 <TextBlock
+                                    Foreground="White"
                                     Grid.Row="2"
                                     Grid.Column="0"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Text="Von:" />
                                 <TextBlock
+                                    Foreground="White"
                                     Grid.Row="2"
                                     Grid.Column="1"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Text="{Binding StartTime}" />
                                 <TextBlock
+                                    Foreground="White"
                                     Grid.Row="3"
                                     Grid.Column="0"
                                     HorizontalAlignment="Center"
@@ -197,15 +218,16 @@
                                     VerticalAlignment="Center"
                                     HorizontalContentAlignment="Center"
                                     VerticalContentAlignment="Center"
+                                    Background="Transparent"
                                     ItemsSource="{Binding EndsList}"
                                     SelectedIndex="{Binding SelectedEnd}" />
                                 <Button
                                     Grid.Row="4"
                                     Grid.ColumnSpan="2"
-                                    Margin="0,15,0,0"
+                                    Margin="5"
                                     Command="{Binding SetClosing}"
                                     Content="Feld sperren"
-                                    Style="{StaticResource calAcceptButton}" />
+                                    Style="{StaticResource button}" />
                             </Grid>
                         </StackPanel>
                     </TabItem>

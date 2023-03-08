@@ -12,22 +12,11 @@ namespace CourterClient.Gui.Gui.UserWindow
         public int SlotId { get; set; }
         public bool IsBooked { get; set; }
         public bool IsOwnBooking { get; set; }
+
+        public bool IsPast { get; set; }
+
         public bool IsClosing { get; set; }
         public DateOnly Today { get; set; }
-
-        private bool enableButton;
-        public bool EnableButton
-        {
-            get => enableButton;
-            set
-            {
-                if (enableButton != value)
-                {
-                    enableButton = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
 
         private SolidColorBrush backgroundColor;
         public SolidColorBrush BackgroundColor
@@ -45,14 +34,12 @@ namespace CourterClient.Gui.Gui.UserWindow
 
         public SlotButtonData(int id, bool isBooked, bool ownBooking, string courtname, int courtid, DateOnly current)
         {
-            EnableButton = true;
             CourtName = courtname;
             CourtId = courtid;
             SlotId = id;
             IsBooked = isBooked;
             IsOwnBooking = ownBooking;
             Today = current;
-
         }
 
         public abstract void SetState();
@@ -76,14 +63,20 @@ namespace CourterClient.Gui.Gui.UserWindow
                 {
                     if (item.id == SlotId)
                     {
-                        EnableButton = false;
+                        IsPast = true;
+                        IsBooked = false;
+                        IsOwnBooking = false;
+                        IsClosing = false;
                     }
                 }
                 else if (Today < DateOnly.FromDateTime(timeNow))
                 {
                     if (item.id == SlotId)
                     {
-                        EnableButton = false;
+                        IsPast = true;
+                        IsBooked = false;
+                        IsOwnBooking = false;
+                        IsClosing = false;
                     }
                 }
             }

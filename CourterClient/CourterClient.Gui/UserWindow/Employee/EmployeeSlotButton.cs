@@ -45,7 +45,7 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
 
             BookingButtonClicked = new DelegateCommand(async _ =>
             {
-                if (!IsBooked && !IsClosing)
+                if (!IsBooked && !IsClosing && !IsPast)
                 {
                     var empWinVM = new EmployeePopUpViewModel(EmployeeClient, newGuestBooking, newClosing, Today, CourtName, CourtId, SlotId);
                     empWindow = new EmployeePopUpView();
@@ -209,10 +209,11 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
 
         public override void SetState()
         {
-            SolidColorBrush green = (SolidColorBrush)new BrushConverter().ConvertFromString("#6f916f");
+            SolidColorBrush green = (SolidColorBrush)new BrushConverter().ConvertFromString("#2E8B57");
             SolidColorBrush red = (SolidColorBrush)new BrushConverter().ConvertFromString("#EE5C42");
-            SolidColorBrush blue = (SolidColorBrush)new BrushConverter().ConvertFromString("#5F9EA0");
-            SolidColorBrush yellow = (SolidColorBrush)new BrushConverter().ConvertFromString("#EEB422");
+            SolidColorBrush blue = (SolidColorBrush)new BrushConverter().ConvertFromString("#1874CD");
+            SolidColorBrush yellow = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFC125");
+            SolidColorBrush past = (SolidColorBrush)new BrushConverter().ConvertFromString("Transparent");
 
             if (GuestName != null)
             {
@@ -228,6 +229,11 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
             else if(IsClosing)
             {
                 BackgroundColor = yellow;
+            }
+            else if(IsPast)
+            {
+                BackgroundColor = past;
+                GuestName = null;
             }
             else
             {

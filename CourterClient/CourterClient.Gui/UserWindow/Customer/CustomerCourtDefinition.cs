@@ -16,7 +16,6 @@ namespace CourterClient.Gui.Gui.UserWindow.Customer
             : base(courtName, id, slots, current)
         {
             CustomerClient = customerClient;
-
             FillCourtSlots();
         }
 
@@ -29,7 +28,6 @@ namespace CourterClient.Gui.Gui.UserWindow.Customer
             var publicClient = root.clientManager.MakePublicClient();
             var allTimeslots = await publicClient.GetTimeslotsAsync();
             var bookedClosings = await publicClient.GetClosingsForDateAsync(Today);
-
 
             if (bookedSlots.Successful && bookedClosings.Successful)
             {
@@ -45,9 +43,9 @@ namespace CourterClient.Gui.Gui.UserWindow.Customer
                 {
                     TimeSlot slot = Slots[i];
                     var button = new CustomerSlotButton(CustomerClient, (int)slot.Id, false, false, CourtName, CourtId, Today);
-                    button.IsBookingPast(timeslotList, timeNow);
                     button.CheckBooking(todaysBookings, slot);
                     button.CheckClosings(todaysClosings, slot);
+                    button.IsBookingPast(timeslotList, timeNow);
                     button.SetState();
                     SlotList.Add(button);
                 }

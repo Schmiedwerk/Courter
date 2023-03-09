@@ -233,7 +233,6 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
             else if(IsPast)
             {
                 BackgroundColor = past;
-                GuestName = null;
             }
             else
             {

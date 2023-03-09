@@ -31,9 +31,9 @@
                 BorderThickness="10"
                 MouseDown="Border_MouseDown">
             <Border.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Offset="0" Color="#F8F8FF" />
-                    <GradientStop Offset="1" Color="#DCDCDC" />
+                <LinearGradientBrush StartPoint="1,0" EndPoint="1,1">
+                    <GradientStop Offset="0" Color="#F0FFF0" />
+                    <GradientStop Offset="1" Color="#FAFAD2" />
                 </LinearGradientBrush>
             </Border.Background>
             <Border.BorderBrush>

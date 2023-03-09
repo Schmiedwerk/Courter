@@ -24,9 +24,7 @@
             MouseUp="Image_MouseUp"
             Source="/Logos/SchließenGrau.png"
             Style="{StaticResource imgClose}" />
-        <Border
-            CornerRadius="20 20 20 20"
-            MouseDown="Border_MouseDown">
+        <Border CornerRadius="20 20 20 20" MouseDown="Border_MouseDown">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                     <GradientStop Offset="0" Color="#6f916f" />
@@ -41,8 +39,9 @@
                 </Grid.RowDefinitions>
                 <StackPanel
                     Grid.Row="0"
+                    Margin="50,10,50,10"
                     HorizontalAlignment="Center"
-                    Orientation="Horizontal" Margin="50 10 50 10">
+                    Orientation="Horizontal">
                     <Button
                         Grid.Row="0"
                         Margin="5"
@@ -77,9 +76,9 @@
                 </StackPanel>
                 <StackPanel
                     Grid.Row="1"
-                    Background="Transparent"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
+                    Background="Transparent"
                     Orientation="Horizontal">
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -93,8 +92,8 @@
                             Margin="5"
                             HorizontalContentAlignment="Stretch"
                             VerticalContentAlignment="Stretch"
-                            BorderThickness="0"
                             Background="Transparent"
+                            BorderThickness="0"
                             IsEnabled="True"
                             ItemTemplate="{StaticResource TimeSlotTemplate}"
                             ItemsSource="{Binding TimeSlots}" />
@@ -109,13 +108,16 @@
                             <ListBox
                                 HorizontalContentAlignment="Stretch"
                                 VerticalContentAlignment="Stretch"
-                                BorderThickness="0"
                                 Background="Transparent"
+                                BorderThickness="0"
                                 ItemTemplate="{StaticResource CourtSlotsTemplate}"
                                 ItemsSource="{Binding Courts}">
                                 <ListBox.ItemsPanel>
                                     <ItemsPanelTemplate>
-                                        <VirtualizingStackPanel IsItemsHost="True" Orientation="Horizontal" Background="Transparent"/>
+                                        <VirtualizingStackPanel
+                                            Background="Transparent"
+                                            IsItemsHost="True"
+                                            Orientation="Horizontal" />
                                     </ItemsPanelTemplate>
                                 </ListBox.ItemsPanel>
                             </ListBox>

@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using CourterClient.ApiClient;
-using CourterClient.Gui.Gui.UserWindow;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace CourterClient.Gui.Gui.AdminWindow
 {

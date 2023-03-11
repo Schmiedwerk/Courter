@@ -1,5 +1,4 @@
-﻿using CourterClient.Gui.Gui.UserWindow;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 
 namespace CourterClient.Gui.UserWindow

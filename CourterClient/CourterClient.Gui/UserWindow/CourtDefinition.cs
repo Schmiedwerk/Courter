@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace CourterClient.Gui.Gui.UserWindow
@@ -40,30 +39,47 @@ namespace CourterClient.Gui.Gui.UserWindow
 
         public abstract Task FillCourtSlots();
 
-        public SlotButtonData IsBookingPast(SlotButtonData button, ApiResponse<IEnumerable<TimeslotOut>> allTimeslots, DateTime timeNow)
+        public SlotButtonData CheckClosings(SlotButtonData button, List<ClosingOut> todaysClosings, TimeSlot slot)
         {
-            if (allTimeslots.Result != null)
+            foreach (var item in todaysClosings)
             {
-                TimeslotOut time;
-                foreach (var item in allTimeslots.Result.ToList())
+                if (item.StartTimeslotId <= slot.Id && item.EndTimeslotId >= slot.Id)
                 {
-                    if (Today == DateOnly.FromDateTime(timeNow) && TimeOnly.FromDateTime(timeNow) > item.Start)
-                    {
-                        if (item.id == button.SlotId)
-                        {
-                            button.EnableButton = false;
-                        }
-                    }
-                    else if (Today < DateOnly.FromDateTime(timeNow))
-                    {
-                        if (item.id == button.SlotId)
-                        {
-                            button.EnableButton = false;
-                        }
-                    }
+                    button.IsClosing = true;
                 }
             }
             return button;
+        }
+
+
+        public List<BookingOut> GetTodaysBookingOuts(List<BookingOut> AllBookings)
+        {
+            List<BookingOut> todaysBookings = new List<BookingOut>();
+
+            foreach (var item in AllBookings)
+            {
+                if (item.Date == Today && item.CourtId == CourtId)
+                {
+                    todaysBookings.Add(item);
+                }
+            }
+
+            return todaysBookings;
+        }
+
+        public List<ClosingOut> GetTodaysClosingOuts(List<ClosingOut> AllClosingOuts)
+        {
+            List<ClosingOut> todaysClosings = new List<ClosingOut>();
+
+            foreach (var close in AllClosingOuts)
+            {
+                if (close.Date == Today && close.CourtId == CourtId)
+                {
+                    todaysClosings.Add(close);
+                }
+            }
+
+            return todaysClosings;
         }
     }
 }

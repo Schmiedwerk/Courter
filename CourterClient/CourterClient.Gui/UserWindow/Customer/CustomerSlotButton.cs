@@ -3,9 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
@@ -22,7 +19,7 @@ namespace CourterClient.Gui.Gui.UserWindow.Customer
 
             BookingButtonClicked = new DelegateCommand(async _ =>
             {
-                if (!IsBooked)
+                if (!IsBooked && !IsClosing && !IsPast)
                 {
                     CustomerBookingIn newBooking = new CustomerBookingIn(Today, SlotId, CourtId);
                     var response = await CustomerClient.AddBookingAsync(newBooking);
@@ -40,22 +37,11 @@ namespace CourterClient.Gui.Gui.UserWindow.Customer
 
                             if (allTimeslots.Result != null && allCourts.Result != null)
                             {
-                                TimeslotOut time;
-                                CourtOut court;
-
-                                foreach (var item in allTimeslots.Result.ToList())
+                                foreach (var time in allTimeslots.Result.ToList())
                                 {
-                                    if (item.id == SlotId)
+                                    if (time.id == SlotId)
                                     {
-                                        time = item;
-                                        foreach (var item2 in allCourts.Result.ToList())
-                                        {
-                                            if (item2.id == CourtId)
-                                            {
-                                                court = item2;
-                                                MessageBox.Show($"Neue Buchung:\nDatum: {booking.Date}\nZeit: {time.Start.ToString()} - {time.End.ToString()}\nSpielfeld: {court.Name}", $"Buchung erfolgreich");
-                                            }
-                                        }
+                                          MessageBox.Show($"Neue Buchung:\nDatum: {booking.Date}\nZeit: {time.Start.ToString()} - {time.End.ToString()}\nSpielfeld: {CourtName}", $"Buchung erfolgreich");
                                     }
                                 }
                             }
@@ -72,15 +58,7 @@ namespace CourterClient.Gui.Gui.UserWindow.Customer
                     {
                         var result = bookedSlots.Result.ToList();
 
-                        var todaysBookings = new List<BookingOut>();
-
-                        foreach (var item in result)
-                        {
-                            if (item.Date == Today && item.CourtId == CourtId)
-                            {
-                                todaysBookings.Add(item);
-                            }
-                        }
+                        var todaysBookings = GetTodaysBookingOuts(result);
 
                         foreach (var item in todaysBookings)
                         {
@@ -126,9 +104,10 @@ namespace CourterClient.Gui.Gui.UserWindow.Customer
 
         public override void SetState()
         {
-            SolidColorBrush green = (SolidColorBrush)new BrushConverter().ConvertFromString("#6f916f");
+            SolidColorBrush green = (SolidColorBrush)new BrushConverter().ConvertFromString("#2E8B57");
             SolidColorBrush red = (SolidColorBrush)new BrushConverter().ConvertFromString("#EE5C42");
-            SolidColorBrush blue = (SolidColorBrush)new BrushConverter().ConvertFromString("#5F9EA0");
+            SolidColorBrush blue = (SolidColorBrush)new BrushConverter().ConvertFromString("#1874CD");
+            SolidColorBrush past = (SolidColorBrush)new BrushConverter().ConvertFromString("Transparent");
 
             if (IsOwnBooking)
             {
@@ -140,6 +119,14 @@ namespace CourterClient.Gui.Gui.UserWindow.Customer
                 {
                     BackgroundColor = green;
                 }
+            }
+            else if (IsClosing)
+            {
+                BackgroundColor = red;
+            }
+            else if (IsPast)
+            {
+                BackgroundColor = past;
             }
             else
             {

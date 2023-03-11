@@ -3,8 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
@@ -20,8 +18,6 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
         private IEmployeeClient EmployeeClient { get; set; }
 
         private EmployeePopUpView empWindow;
-
-        public bool IsClosing { get; set; }
 
         private string? guestName;
         public string? GuestName
@@ -49,9 +45,9 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
 
             BookingButtonClicked = new DelegateCommand(async _ =>
             {
-                if (!IsBooked && !IsClosing)
+                if (!IsBooked && !IsClosing && !IsPast)
                 {
-                    var empWinVM = new EmployeePopUpViewModel(newGuestBooking, newClosing, Today, CourtName, CourtId, SlotId);
+                    var empWinVM = new EmployeePopUpViewModel(EmployeeClient, newGuestBooking, newClosing, Today, CourtName, CourtId, SlotId);
                     empWindow = new EmployeePopUpView();
                     empWindow.DataContext = empWinVM;
                     empWindow.ShowDialog();
@@ -64,15 +60,7 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
                     {
                         var result = bookedSlots.Result.ToList();
 
-                        var todaysBookings = new List<BookingOut>();
-
-                        foreach (var item in result)
-                        {
-                            if (item.Date == Today && item.CourtId == CourtId)
-                            {
-                                todaysBookings.Add(item);
-                            }
-                        }
+                        var todaysBookings = GetTodaysBookingOuts(result);
 
                         foreach (var item in todaysBookings)
                         {
@@ -114,7 +102,9 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
                 }
                 else if(IsClosing)
                 {
-                    var closings = await EmployeeClient.GetClosingsForDateAsync(Today);
+                    var root = App.AppHost.Services.GetRequiredService<ClientManager>();
+                    var publicClient = root.clientManager.MakePublicClient();
+                    var closings = await publicClient.GetClosingsForDateAsync(Today);
 
                     if (closings.Successful)
                     {
@@ -127,8 +117,6 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
                                 var result = await EmployeeClient.DeleteClosingAsync(close.Id);
                                 if (result.Successful)
                                 {
-                                    var root = App.AppHost.Services.GetRequiredService<ClientManager>();
-                                    var publicClient = root.clientManager.MakePublicClient();
                                     var allTimeslots = await publicClient.GetTimeslotsAsync();
                                     TimeslotOut start = null, end = null;
 
@@ -192,7 +180,6 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
             }
         }
 
-
         public async void AddGuestbooking(GuestBookingIn guest)
         {
             var root = App.AppHost.Services.GetRequiredService<ClientManager>();
@@ -222,10 +209,11 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
 
         public override void SetState()
         {
-            SolidColorBrush green = (SolidColorBrush)new BrushConverter().ConvertFromString("#6f916f");
+            SolidColorBrush green = (SolidColorBrush)new BrushConverter().ConvertFromString("#2E8B57");
             SolidColorBrush red = (SolidColorBrush)new BrushConverter().ConvertFromString("#EE5C42");
-            SolidColorBrush blue = (SolidColorBrush)new BrushConverter().ConvertFromString("#5F9EA0");
-            SolidColorBrush yellow = (SolidColorBrush)new BrushConverter().ConvertFromString("#EEB422");
+            SolidColorBrush blue = (SolidColorBrush)new BrushConverter().ConvertFromString("#1874CD");
+            SolidColorBrush yellow = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFC125");
+            SolidColorBrush past = (SolidColorBrush)new BrushConverter().ConvertFromString("Transparent");
 
             if (GuestName != null)
             {
@@ -242,6 +230,10 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
             {
                 BackgroundColor = yellow;
             }
+            else if(IsPast)
+            {
+                BackgroundColor = past;
+            }
             else
             {
                 if (IsBooked)
@@ -251,6 +243,21 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
                 else
                 {
                     BackgroundColor = green;
+                }
+            }
+        }
+
+        public void CheckGuestname(List<BookingOut> todaysBookings, TimeSlot slot)
+        {
+            foreach (var item in todaysBookings)
+            {
+                if (item.TimeslotId == slot.Id)
+                {
+                    if (item.GuestName != null)
+                    {
+                        GuestName = item.GuestName;
+                    }
+                    IsBooked = true;
                 }
             }
         }

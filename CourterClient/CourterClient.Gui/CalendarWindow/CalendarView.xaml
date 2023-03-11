@@ -22,29 +22,32 @@
             Source="/Logos/SchließenGrau.png"
             Style="{StaticResource imgClose}" />
         <Border
-            Background="White"
             CornerRadius="20 20 20 20"
-            MouseDown="Border_MouseDown"
-            BorderThickness="3"
-            BorderBrush="#6f916f">
+            MouseDown="Border_MouseDown">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Offset="0" Color="#6f916f" />
+                    <GradientStop Offset="1" Color="#c8ab37" />
+                </LinearGradientBrush>
+            </Border.Background>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="40" />
                     <RowDefinition Height="240" />
                     <RowDefinition Height="70" />
                 </Grid.RowDefinitions>
-                <Viewbox Grid.Row="1" Margin="5" >
+                <Viewbox Grid.Row="1" Margin="5">
                     <Calendar
                         x:Name="CalendarWidget" BorderThickness="0"
                         HorizontalAlignment="Center" HorizontalContentAlignment="Stretch"
-                        VerticalAlignment="Center" VerticalContentAlignment="Stretch"
+                        VerticalAlignment="Center" VerticalContentAlignment="Stretch" BorderBrush="Transparent" 
                         Background="Transparent" MouseDoubleClick="Button_Click" GotMouseCapture="CalendarWidget_GotMouseCapture"/>
                 </Viewbox>
                 <Button
                     Grid.Row="2"
-                    Margin="10 15"
+                    Margin="9"
                     Content="Übernehmen"
-                    Style="{StaticResource calAcceptButton}" Click="Button_Click"/>
+                    Style="{StaticResource button}" Click="Button_Click"/>
             </Grid>
         </Border>
     </Grid>

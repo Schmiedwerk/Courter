@@ -1,14 +1,11 @@
 ﻿using CourterClient.ApiClient;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Automation.Peers;
 
 namespace CourterClient.Gui.Gui.UserWindow.Customer
 {
@@ -19,7 +16,6 @@ namespace CourterClient.Gui.Gui.UserWindow.Customer
             : base(courtName, id, slots, current)
         {
             CustomerClient = customerClient;
-
             FillCourtSlots();
         }
 
@@ -27,48 +23,29 @@ namespace CourterClient.Gui.Gui.UserWindow.Customer
         {
             SlotList = new ObservableCollection<SlotButtonData>();
             var bookedSlots = await CustomerClient.GetBookingsForDateAsync(Today);
-
             var timeNow = DateTime.Now;
-
             var root = App.AppHost.Services.GetRequiredService<ClientManager>();
             var publicClient = root.clientManager.MakePublicClient();
             var allTimeslots = await publicClient.GetTimeslotsAsync();
+            var bookedClosings = await publicClient.GetClosingsForDateAsync(Today);
 
-
-            if (bookedSlots.Successful)
+            if (bookedSlots.Successful && bookedClosings.Successful)
             {
-                var result = bookedSlots.Result.ToList();
+                var bookingResults = bookedSlots.Result.ToList();
+                    var closingResults = bookedClosings.Result.ToList();
 
-                var todaysBookings = new List<BookingOut>();
+                    var todaysBookings = GetTodaysBookingOuts(bookingResults);
+                    var todaysClosings = GetTodaysClosingOuts(closingResults);
 
-                foreach (var item in result)
-                {
-                    if (item.Date == Today && item.CourtId == CourtId)
-                    {
-                        todaysBookings.Add(item);
-                    }
-                }
+                    var timeslotList = allTimeslots.Result.ToList();
 
                 for (int i = 0; i < Slots.Count; i++)
                 {
                     TimeSlot slot = Slots[i];
-
                     var button = new CustomerSlotButton(CustomerClient, (int)slot.Id, false, false, CourtName, CourtId, Today);
-                    button = (CustomerSlotButton)IsBookingPast(button, allTimeslots, timeNow);
-
-                    foreach (var item in todaysBookings)
-                    {
-                        if (item.TimeslotId == slot.Id)
-                        {
-                            if (item.CustomerId != null)
-                            {
-                                button.IsBooked = true;
-                                button.IsOwnBooking = true;
-                            }
-                            button.IsBooked = true;
-                        }
-
-                    }
+                    button.CheckBooking(todaysBookings, slot);
+                    button.CheckClosings(todaysClosings, slot);
+                    button.IsBookingPast(timeslotList, timeNow);
                     button.SetState();
                     SlotList.Add(button);
                 }

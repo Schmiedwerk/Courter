@@ -1,4 +1,5 @@
 ﻿using CourterClient.ApiClient;
+using CourterClient.Gui.Gui.PopUpWindows;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace CourterClient.Gui.Gui.UserWindow.Customer
     public class CustomerSlotButton : SlotButtonData
     {
         private ICustomerClient CustomerClient { get; set; }
+
 
         public CustomerSlotButton(ICustomerClient customerClient, int id, bool isBooked, bool ownBooking, string courtname, int courtid, DateOnly current)
             : base(id, isBooked, ownBooking, courtname, courtid, current)
@@ -41,7 +43,14 @@ namespace CourterClient.Gui.Gui.UserWindow.Customer
                                 {
                                     if (time.id == SlotId)
                                     {
-                                          MessageBox.Show($"Neue Buchung:\nDatum: {booking.Date}\nZeit: {time.Start.ToString()} - {time.End.ToString()}\nSpielfeld: {CourtName}", $"Buchung erfolgreich");
+                                        List<string> info = new List<string>();
+                                        info.Add("Neue Buchung:");
+                                        info.Add(booking.Date.ToString());
+                                        info.Add(CourtName);
+                                        info.Add(time.Start.ToString());
+                                        info.Add(time.End.ToString());
+                                        var InfoView = new InfoView(info);
+                                        InfoView.ShowDialog();
                                     }
                                 }
                             }
@@ -82,13 +91,32 @@ namespace CourterClient.Gui.Gui.UserWindow.Customer
                                             {
                                                 if (courtItem.id == CourtId)
                                                 {
-                                                    court = courtItem;
-                                                    var deletion = await CustomerClient.DeleteBookingAsync(item.Id);
-                                                    if (deletion.Successful)
+                                                    List<string> info = new List<string>();
+                                                    info.Add("Buchung stornieren?");
+                                                    info.Add(item.Date.ToString());
+                                                    info.Add(CourtName);
+                                                    info.Add(time.Start.ToString());
+                                                    info.Add(time.End.ToString());
+
+                                                    var question = new DeleteView(info, transferResponse);
+                                                    question.ShowDialog();
+                                                    if(Response)
                                                     {
-                                                        MessageBox.Show($"Buchung gelöscht:\nDatum: {item.Date}\nZeit: {time.Start.ToString()} - {time.End.ToString()}\nSpielfeld: {court.Name}", $"Buchung storniert");
-                                                        IsOwnBooking = false;
-                                                        ChangeState(false);
+                                                        court = courtItem;
+                                                        var deletion = await CustomerClient.DeleteBookingAsync(item.Id);
+                                                        if (deletion.Successful)
+                                                        {
+                                                            info = new List<string>();
+                                                            info.Add("Buchung gelöscht:");
+                                                            info.Add(item.Date.ToString());
+                                                            info.Add(court.Name);
+                                                            info.Add(time.Start.ToString());
+                                                            info.Add(time.End.ToString());
+                                                            var InfoView = new InfoView(info);
+                                                            InfoView.ShowDialog();
+                                                            IsOwnBooking = false;
+                                                            ChangeState(false);
+                                                        }
                                                     }
                                                 }
                                             }

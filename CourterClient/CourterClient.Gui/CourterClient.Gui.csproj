@@ -13,6 +13,7 @@
     <None Remove="Logos\Benutzer.png" />
     <None Remove="Logos\BenutzerGrau.png" />
     <None Remove="Logos\Courter.ico" />
+    <None Remove="Logos\Courter.png" />
     <None Remove="Logos\Kalender.png" />
     <None Remove="Logos\Schließen.png" />
     <None Remove="Logos\SchließenGrau.png" />
@@ -36,6 +37,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Logos\Courter.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Logos\Courter.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Logos\Kalender.png">

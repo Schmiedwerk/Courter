@@ -49,9 +49,9 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
                     TimeSlot slot = Slots[i];
 
                     var button = new EmployeeSlotButton(EmployeeClient, TransferCourtDefinitionTrigger, (int)slot.Id, false, false, CourtName, CourtId, Today);
-                    button.CheckGuestname(todaysBookings, slot);
                     button.CheckClosings(todaysClosings, slot);
                     button.IsBookingPast(timeslotList, timeNow);
+                    button.CheckGuestname(todaysBookings, slot);
 
                     button.SetState();
                     SlotList.Add(button);

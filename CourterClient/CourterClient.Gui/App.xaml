@@ -178,7 +178,7 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="20">
+                            CornerRadius="25">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </ControlTemplate>
@@ -272,24 +272,24 @@
                         Grid.Column="0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Foreground="White"
                         Background="Transparent"
+                        Foreground="White"
                         Style="{StaticResource normalText}"
                         Text="{Binding Path=Start}" />
                     <TextBlock
                         Grid.Column="1"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Foreground="White"
                         Background="Transparent"
+                        Foreground="White"
                         Style="{StaticResource normalText}"
                         Text="{Binding Path=Hyphen}" />
                     <TextBlock
                         Grid.Column="2"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Foreground="White"
                         Background="Transparent"
+                        Foreground="White"
                         Style="{StaticResource normalText}"
                         Text="{Binding Path=End}" />
                 </Grid>
@@ -309,8 +309,7 @@
                 Command="{Binding Path=BookingButtonClicked}"
                 Content="{Binding Path=GuestName}"
                 FontSize="16"
-                Foreground="White">
-            </Button>
+                Foreground="White" />
         </DataTemplate>
 
         <DataTemplate x:Key="CourtSlotsTemplate">
@@ -328,19 +327,19 @@
                         Grid.Row="0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Foreground="White"
                         Background="Transparent"
+                        Foreground="White"
                         IsEnabled="False"
                         Style="{StaticResource normalText}"
                         Text="{Binding Path=CourtName}" />
                     <ListBox
                         x:Name="SlotListBox"
                         Grid.Row="1"
-                        Background="Transparent"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         HorizontalContentAlignment="Stretch"
                         VerticalContentAlignment="Stretch"
+                        Background="Transparent"
                         BorderThickness="0"
                         ItemTemplate="{StaticResource BookingButton}"
                         ItemsSource="{Binding Path=SlotList}" />
@@ -356,31 +355,27 @@
                         <Border>
                             <Grid>
                                 <Grid>
-                                    <Border x:Name="border" 
-                                            Height="30"
-                                            CornerRadius="10 10 0 0"
-                                            BorderBrush="White"
-                                            BorderThickness="0.2"
-                                            Background="Transparent"
-                                            Margin="1"/>
+                                    <Border
+                                        x:Name="border"
+                                        Height="30"
+                                        Margin="1"
+                                        Background="Transparent"
+                                        BorderBrush="White"
+                                        BorderThickness="0.2"
+                                        CornerRadius="10 10 0 0" />
                                 </Grid>
-                                <ContentPresenter ContentSource="Header"
-                                                      HorizontalAlignment="Center"
-                                                      VerticalAlignment="Center"/>
+                                <ContentPresenter
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    ContentSource="Header" />
                             </Grid>
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver"
-                                     Value="True">
-                                <Setter TargetName="border"
-                                        Property="Background"
-                                        Value="#C8AB37" />
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#C8AB37" />
                             </Trigger>
-                            <Trigger Property="IsSelected"
-                                     Value="True">
-                                <Setter TargetName="border"
-                                        Property="Background"
-                                        Value="#C8AB37" />
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#C8AB37" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -393,7 +388,10 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ComboBox}">
                         <Grid>
-                            <ToggleButton Grid.Column="2" Focusable="false" IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}" >
+                            <ToggleButton
+                                Grid.Column="2"
+                                Focusable="false"
+                                IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
                                 <ToggleButton.Template>
                                     <ControlTemplate>
                                         <Grid>
@@ -401,9 +399,27 @@
                                                 <ColumnDefinition Width="5*" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
-                                            <Border x:Name="Border"  Grid.ColumnSpan="2" CornerRadius="5" Background="Transparent" BorderBrush="White" BorderThickness="1" />
-                                            <Border Grid.Column="0" CornerRadius="5,0,0,5"  Margin="1"  Background="Transparent"  BorderBrush="White" BorderThickness="0,0,1,0" />
-                                            <Path x:Name="Arrow" Grid.Column="1"  Fill="White" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z"/>
+                                            <Border
+                                                x:Name="Border"
+                                                Grid.ColumnSpan="2"
+                                                Background="Transparent"
+                                                BorderBrush="White"
+                                                BorderThickness="1"
+                                                CornerRadius="5" />
+                                            <Border
+                                                Grid.Column="0"
+                                                Margin="1"
+                                                Background="Transparent"
+                                                BorderBrush="White"
+                                                BorderThickness="0,0,1,0"
+                                                CornerRadius="5,0,0,5" />
+                                            <Path
+                                                x:Name="Arrow"
+                                                Grid.Column="1"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Data="M 0 0 L 4 4 L 8 0 Z"
+                                                Fill="White" />
                                         </Grid>
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="ToggleButton.IsMouseOver" Value="true">
@@ -416,12 +432,39 @@
                                     </ControlTemplate>
                                 </ToggleButton.Template>
                             </ToggleButton>
-                            <ContentPresenter Name="ContentSite" HorizontalAlignment="Center" VerticalAlignment="Center" IsHitTestVisible="False"  Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" Margin="3"  />
-                            <TextBox x:Name="PART_EditableTextBox" Foreground="White" Visibility="Hidden" IsReadOnly="{TemplateBinding IsReadOnly}"/>
-                            <Popup Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True"  Focusable="False" PopupAnimation="Slide">
-                                <Grid  Name="DropDown" SnapsToDevicePixels="True" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
-                                    <Border x:Name="DropDownBorder" Background="#C8AB37" CornerRadius="0 0 5 5" BorderThickness="1" BorderBrush="White"/>
-                                    <ScrollViewer SnapsToDevicePixels="True" Foreground="White">
+                            <ContentPresenter
+                                Name="ContentSite"
+                                Margin="3"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding SelectionBoxItem}"
+                                ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                IsHitTestVisible="False" />
+                            <TextBox
+                                x:Name="PART_EditableTextBox"
+                                Foreground="White"
+                                IsReadOnly="{TemplateBinding IsReadOnly}"
+                                Visibility="Hidden" />
+                            <Popup
+                                Name="Popup"
+                                AllowsTransparency="True"
+                                Focusable="False"
+                                IsOpen="{TemplateBinding IsDropDownOpen}"
+                                Placement="Bottom"
+                                PopupAnimation="Slide">
+                                <Grid
+                                    Name="DropDown"
+                                    MinWidth="{TemplateBinding ActualWidth}"
+                                    MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                    SnapsToDevicePixels="True">
+                                    <Border
+                                        x:Name="DropDownBorder"
+                                        Background="#C8AB37"
+                                        BorderBrush="White"
+                                        BorderThickness="1"
+                                        CornerRadius="0 0 5 5" />
+                                    <ScrollViewer Foreground="White" SnapsToDevicePixels="True">
                                         <StackPanel IsItemsHost="True" />
                                     </ScrollViewer>
                                 </Grid>
@@ -430,8 +473,7 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-            <Style.Triggers>
-            </Style.Triggers>
+            <Style.Triggers />
         </Style>
     </Application.Resources>
 </Application>

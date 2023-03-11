@@ -1,0 +1,85 @@
+﻿<Window x:Class="CourterClient.Gui.Gui.PopUpWindows.DeleteView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CourterClient.Gui.Gui.PopUpWindows"
+        Title="MessageView"     
+        Width="350"
+        Height="300"
+        AllowsTransparency="True"
+        Background="Transparent"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        mc:Ignorable="d">
+    <Grid>
+        <Image
+            Grid.Column="1"
+            Width="20"
+            Height="20"
+            Panel.ZIndex="1"
+            MouseUp="Image_MouseUp"
+            Source="/Logos/SchließenGrau.png"
+            Style="{StaticResource imgClose}" />
+        <Border
+            CornerRadius="20 20 20 20"
+            MouseDown="Border_MouseDown">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Offset="0" Color="#6f916f" />
+                    <GradientStop Offset="1" Color="#c8ab37" />
+                </LinearGradientBrush>
+            </Border.Background>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="190" />
+                    <RowDefinition Height="70" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.5*" />
+                    <ColumnDefinition Width="0.5*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Row="1" Grid.ColumnSpan="2">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0.5*"/>
+                            <ColumnDefinition Width="0.5*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" x:Name="Header" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="20" FontWeight="Bold"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Datum:" HorizontalAlignment="Right" Margin="10 0" VerticalAlignment="Center" Foreground="White" FontSize="14"  />
+                        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="Date" HorizontalAlignment="Left" Margin="10 0" VerticalAlignment="Center" Foreground="White" FontSize="14" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Spielfeld:"  HorizontalAlignment="Right" Margin="10 0" VerticalAlignment="Center" Foreground="White" FontSize="14"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" x:Name="Field" HorizontalAlignment="Left" Margin="10 0" VerticalAlignment="Center" Foreground="White" FontSize="14" />
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Von:"  HorizontalAlignment="Right" Margin="10 0" VerticalAlignment="Center" Foreground="White" FontSize="14"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" x:Name="Start" HorizontalAlignment="Left" Margin="10 0" VerticalAlignment="Center" Foreground="White" FontSize="14" />
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Bis:"  HorizontalAlignment="Right" Margin="10 0" VerticalAlignment="Center" Foreground="White" FontSize="14"/>
+                        <TextBlock Grid.Row="4" Grid.Column="1" x:Name="End" HorizontalAlignment="Left" Margin="10 0" VerticalAlignment="Center" Foreground="White" FontSize="14" />
+                    </Grid>
+                </StackPanel>
+                <Button
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Content="Stornieren"
+                    Height="50"
+                    Width="150"
+                    Style="{StaticResource button}" Click="Button_Click" />
+                <Button
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Click="Close_Click"
+                    Content="Abbrechen"
+                    Height="50"
+                    Width="150"
+                    Style="{StaticResource calDeclineButton}" />
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

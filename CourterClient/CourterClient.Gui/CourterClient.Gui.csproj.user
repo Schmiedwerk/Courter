@@ -20,6 +20,12 @@
     <Compile Update="LoginWindow\LoginView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="PopUpWindows\DeleteView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PopUpWindows\InfoView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="RegistrationWindow\RegistrationView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -47,6 +53,12 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="LoginWindow\LoginView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="PopUpWindows\DeleteView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="PopUpWindows\InfoView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="RegistrationWindow\RegistrationView.xaml">

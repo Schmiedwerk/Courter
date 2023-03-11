@@ -16,6 +16,8 @@ namespace CourterClient.Gui
     public delegate void TransferGuestBooking(GuestBookingIn guestBooking);
     public delegate void TransferClosing(ClosingIn closing);
 
+    public delegate void TransferResponse(bool response);
+
     public delegate Task TransferCourtDefinitionTrigger();
 
     public abstract class ViewModelBase : INotifyPropertyChanged

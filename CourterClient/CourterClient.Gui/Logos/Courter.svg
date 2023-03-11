@@ -8,8 +8,8 @@
    version="1.1"
    id="svg5"
    sodipodi:docname="Courter.svg"
-   inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
-   inkscape:export-filename="C:\Users\maximilian.malik\Documents\Berufsschule\Ausbildungsjahr #3\Lernfeld 12\gui\40dpt-Courter\Logos\Courter.png"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   inkscape:export-filename="Courter.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -29,29 +29,22 @@
      units="px"
      showguides="false"
      inkscape:zoom="15.017488"
-     inkscape:cx="38.788112"
-     inkscape:cy="27.368093"
-     inkscape:window-width="2560"
-     inkscape:window-height="1377"
+     inkscape:cx="25.170654"
+     inkscape:cy="22.440504"
+     inkscape:window-width="1280"
+     inkscape:window-height="961"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1" />
+     inkscape:current-layer="layer1"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#505050" />
   <defs
      id="defs2" />
   <g
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.502562;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers stroke fill"
-       id="rect3576"
-       width="12.7"
-       height="12.7"
-       x="0.018234095"
-       y="-12.681766"
-       ry="0.50813484"
-       transform="rotate(90)" />
     <circle
        style="fill:#c8ab37;stroke:none;stroke-width:0;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:markers stroke fill;fill-opacity:1"
        id="path2684"
@@ -59,20 +52,34 @@
        cy="-6.3317661"
        r="6.2177081"
        transform="rotate(90)" />
-    <circle
+    <path
        style="fill:none;stroke:#ffffff;stroke-width:0.507575;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:0.0507575, 0.0507575;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers stroke fill"
        id="path2684-8"
-       cx="-2.1235316"
-       cy="-6.3318505"
-       r="5.9639988"
-       transform="rotate(90)" />
-    <circle
-       style="fill:none;stroke:#ffffff;stroke-width:0.507575;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:0.0507575, 0.0507575;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers stroke fill"
+       transform="rotate(90)"
+       sodipodi:type="arc"
+       sodipodi:cx="-2.1235316"
+       sodipodi:cy="-6.3318505"
+       sodipodi:rx="5.9639988"
+       sodipodi:ry="5.9639988"
+       sodipodi:start="5.46502"
+       sodipodi:end="0.82798978"
+       sodipodi:arc-type="arc"
+       d="m 1.9532283,-10.684931 a 5.9639988,5.9639988 0 0 1 1.887167,4.3823769 5.9639988,5.9639988 0 0 1 -1.9301298,4.3636254"
+       sodipodi:open="true" />
+    <path
+       style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:0.508;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:0.0508, 0.0508;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers stroke fill"
        id="path2684-8-7"
-       cx="14.823417"
-       cy="-6.3318505"
-       r="5.9639988"
-       transform="rotate(90)" />
+       transform="rotate(90)"
+       sodipodi:type="arc"
+       sodipodi:cx="14.823417"
+       sodipodi:cy="-6.3318505"
+       sodipodi:rx="5.9639988"
+       sodipodi:ry="5.9639988"
+       sodipodi:start="2.3177735"
+       sodipodi:end="3.9688208"
+       sodipodi:open="true"
+       sodipodi:arc-type="arc"
+       d="M 10.771334,-1.9557903 A 5.9639988,5.9639988 0 0 1 8.8594266,-6.3420161 5.9639988,5.9639988 0 0 1 10.786275,-10.721699" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82222px;line-height:1.25;font-family:'Bauhaus 93';-inkscape-font-specification:'Bauhaus 93, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;white-space:pre;opacity:1;fill:#6f916f;fill-opacity:1;stroke-width:0.264583"

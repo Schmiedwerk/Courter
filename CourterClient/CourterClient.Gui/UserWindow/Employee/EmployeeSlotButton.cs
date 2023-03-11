@@ -1,6 +1,8 @@
 ﻿using CourterClient.ApiClient;
+using CourterClient.Gui.Gui.PopUpWindows;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -42,6 +44,7 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
             newGuestBooking += new TransferGuestBooking(AddGuestbooking);
 
             newClosing += new TransferClosing(AddClosing);
+            
 
             BookingButtonClicked = new DelegateCommand(async _ =>
             {
@@ -54,6 +57,7 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
                 }
                 else if(IsBooked && GuestName != null)
                 {
+
                     var bookedSlots = await EmployeeClient.GetBookingsForDateAsync(Today);
 
                     if (bookedSlots.Successful)
@@ -83,11 +87,26 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
                                             {
                                                 if (courtItem.id == CourtId)
                                                 {
+                                                    List<string> info = new List<string>();
+                                                    info.Add("Buchung stornieren?");
+                                                    info.Add(item.Date.ToString());
+                                                    info.Add(CourtName);
+                                                    info.Add(time.Start.ToString());
+                                                    info.Add(time.End.ToString());
+
+                                                    var question = new DeleteView(info, transferResponse);
+                                                    question.ShowDialog();
                                                     var deletion = await EmployeeClient.DeleteGuestBookingAsync(item.Id);
                                                     if (deletion.Successful)
                                                     {
-                                                        MessageBox.Show($"Buchung gelöscht:\nDatum: {item.Date}\nSpielfeld: {CourtName}" +
-                                                            $"\nZeit: {time.Start.ToString()} - {time.End.ToString()}\nName {GuestName}", $"Buchung storniert");
+                                                        info = new List<string>();
+                                                        info.Add("Buchung gelöscht");
+                                                        info.Add(item.Date.ToString());
+                                                        info.Add(CourtName);
+                                                        info.Add(time.Start.ToString());
+                                                        info.Add(time.End.ToString());
+                                                        var InfoView = new InfoView(info);
+                                                        InfoView.ShowDialog();
                                                         GuestName = null;
                                                         ChangeState(false);
                                                     }
@@ -99,6 +118,7 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
                             }
                         }
                     }
+
                 }
                 else if(IsClosing)
                 {
@@ -114,30 +134,53 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
                         {
                             if (close.Date == Today && close.CourtId == CourtId && close.StartTimeslotId <= SlotId && close.EndTimeslotId >= SlotId)
                             {
-                                var result = await EmployeeClient.DeleteClosingAsync(close.Id);
-                                if (result.Successful)
+                                var allTimeslots = await publicClient.GetTimeslotsAsync();
+                                TimeslotOut start = null, end = null;
+
+                                if(allTimeslots.Successful)
                                 {
-                                    var allTimeslots = await publicClient.GetTimeslotsAsync();
-                                    TimeslotOut start = null, end = null;
-
-                                    if(allTimeslots.Successful)
+                                    foreach(var slot in allTimeslots.Result.ToList())
                                     {
-                                        foreach(var slot in allTimeslots.Result.ToList())
+                                        if(slot.id == close.StartTimeslotId)
                                         {
-                                            if(slot.id == close.StartTimeslotId)
-                                            {
-                                                start = slot;
-                                            }
-
-                                            if(slot.id == close.EndTimeslotId)
-                                            {
-                                                end = slot;
-                                            }
+                                            start = slot;
                                         }
-                                        MessageBox.Show($"Feldsperrung gelöscht:\n\nDatum: {Today}\nSpielfeld: {CourtName}\nVon:{start?.Start} Bis: {end?.End}", "Feldsperrung gelöscht");
-                                        await newCourtDefinitionTrigger.Invoke();
+
+                                        if(slot.id == close.EndTimeslotId)
+                                        {
+                                            end = slot;
+                                        }
+                                    }
+                                    List<string> info = new List<string>();
+                                    info.Add("Sperrung löschen?");
+                                    info.Add(Today.ToString());
+                                    info.Add(CourtName);
+                                    info.Add(start.Start.ToString());
+                                    info.Add(end.End.ToString());
+
+                                    var question = new DeleteView(info, transferResponse);
+                                    question.ShowDialog();
+
+                                    if(Response)
+                                    {
+                                        var result = await EmployeeClient.DeleteClosingAsync(close.Id);
+                                        if (result.Successful)
+                                        {
+
+
+                                            info = new List<string>();
+                                            info.Add("Feldsperrung gelöscht:");
+                                            info.Add(Today.ToString());
+                                            info.Add(CourtName);
+                                            info.Add(start.Start.ToString());
+                                            info.Add(end.End.ToString());
+                                            var InfoView = new InfoView(info);
+                                            InfoView.ShowDialog();
+                                            await newCourtDefinitionTrigger.Invoke();
+                                        }
                                     }
                                 }
+                                
                             }
                         }
 
@@ -170,12 +213,19 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
                         if(response.Successful)
                         {
                             var newClosing = response.Result;
-                            MessageBox.Show($"Feld sperren erfolgreich:\n\nDatum: {newClosing?.Date}\nSpielfeld {CourtName}\nVon: {start} Bis: {end}", "Feld gesperrt.");
+                            
                             empWindow.Close();
+                            List<string> info = new List<string>();
+                            info.Add("Feld erfolgreich gesperrt:");
+                            info.Add(newClosing.Date.ToString());
+                            info.Add(CourtName);
+                            info.Add(start);
+                            info.Add(end);
+                            var InfoView = new InfoView(info);
+                            InfoView.ShowDialog();
                             await newCourtDefinitionTrigger.Invoke();
                         }
                     }
-
                 }
             }
         }
@@ -196,8 +246,15 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
                         if (response.Successful)
                         {
                             var newUser = response.Result;
-                            MessageBox.Show($"Gastbuchung erfolgreich:\n\nDatum: {newUser?.Date}\nSpielfeld {CourtName}\nVon: {slot.Start} Bis: {slot.End}\nName: {newUser?.GuestName}", "Gastbuchung erstellt.");
                             empWindow.Close();
+                            List<string> info = new List<string>();
+                            info.Add($"Gastbuchung erstellt:");
+                            info.Add(newUser.Date.ToString());
+                            info.Add(CourtName);
+                            info.Add(slot.Start.ToString());
+                            info.Add(slot.End.ToString());
+                            var InfoView = new InfoView(info);
+                            InfoView.ShowDialog();
                         }
                         break;
                     }
@@ -253,11 +310,14 @@ namespace CourterClient.Gui.Gui.UserWindow.Employee
             {
                 if (item.TimeslotId == slot.Id)
                 {
-                    if (item.GuestName != null)
+                    if (!IsPast)
                     {
-                        GuestName = item.GuestName;
+                        if (item.GuestName != null)
+                        {
+                            GuestName = item.GuestName;
+                        }
+                        IsBooked = true;
                     }
-                    IsBooked = true;
                 }
             }
         }

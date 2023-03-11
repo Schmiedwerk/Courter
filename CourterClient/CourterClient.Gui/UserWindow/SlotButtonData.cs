@@ -7,6 +7,7 @@ namespace CourterClient.Gui.Gui.UserWindow
 {
     public abstract class SlotButtonData : ViewModelBase
     {
+        public TransferResponse transferResponse;
         public string CourtName { get; set; }
         public int CourtId { get; set; }
         public int SlotId { get; set; }
@@ -17,6 +18,21 @@ namespace CourterClient.Gui.Gui.UserWindow
 
         public bool IsClosing { get; set; }
         public DateOnly Today { get; set; }
+
+        private bool response;
+
+        public bool Response
+        {
+            get => response;
+            set
+            {
+                if (response != value)
+                {
+                    response = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
 
         private SolidColorBrush backgroundColor;
         public SolidColorBrush BackgroundColor
@@ -40,6 +56,7 @@ namespace CourterClient.Gui.Gui.UserWindow
             IsBooked = isBooked;
             IsOwnBooking = ownBooking;
             Today = current;
+            transferResponse += new TransferResponse(SetResponse);
         }
 
         public abstract void SetState();
@@ -80,6 +97,11 @@ namespace CourterClient.Gui.Gui.UserWindow
                     }
                 }
             }
+        }
+
+        public void SetResponse(bool response)
+        {
+            this.Response = response;
         }
 
         public void CheckBooking(List<BookingOut> todaysBookings, TimeSlot slot)

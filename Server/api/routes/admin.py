@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..administration.accounts import make_account_manager, create_account
 from ..db.access import get_session
 from ..db.models import Admin, Employee, Timeslot, Court
-from ..exceptions import conflict, not_found
+from ..exceptions import conflict, not_found, bad_request
 from ..schemes import (
     UserIn, UserOut, UserFromToken, CourtIn, CourtOut, TimeslotIn, TimeslotOut
 )
@@ -23,15 +23,16 @@ ROUTER = APIRouter(
 )
 
 
-@ROUTER.get('/admins', response_model=list[UserOut])
-async def get_admins(session: AsyncSession = Depends(get_session)) -> list[Admin]:
+@ROUTER.get('/admins')
+async def get_admins(session: AsyncSession = Depends(get_session)) -> list[UserOut]:
     admins = await Admin.get_all(session)
-    return list(admins)
+    return list(UserOut.from_orm(admin) for admin in admins)
 
 
-@ROUTER.post('/admins', status_code=status.HTTP_201_CREATED, response_model=UserOut)
-async def add_admin(user: UserIn, session: AsyncSession = Depends(get_session)) -> Admin:
-    return await create_account(session, Admin, user)
+@ROUTER.post('/admins', status_code=status.HTTP_201_CREATED)
+async def add_admin(user: UserIn, session: AsyncSession = Depends(get_session)) -> UserOut:
+    admin = await create_account(session, Admin, user)
+    return UserOut.from_orm(admin)
 
 
 @ROUTER.delete('/admins/{admin_id}')
@@ -39,15 +40,16 @@ async def delete_admin(admin_id: int, session: AsyncSession = Depends(get_sessio
     await make_account_manager(admin_id, Admin).delete(session)
 
 
-@ROUTER.get('/employees', response_model=list[UserOut])
-async def get_employees(session: AsyncSession = Depends(get_session)) -> list[Employee]:
+@ROUTER.get('/employees')
+async def get_employees(session: AsyncSession = Depends(get_session)) -> list[UserOut]:
     employees = await Employee.get_all(session)
-    return list(employees)
+    return list(UserOut.from_orm(employee) for employee in employees)
 
 
-@ROUTER.post('/employees', status_code=status.HTTP_201_CREATED, response_model=UserOut)
-async def add_employee(user: UserIn, session: AsyncSession = Depends(get_session)) -> Employee:
-    return await create_account(session, Employee, user)
+@ROUTER.post('/employees', status_code=status.HTTP_201_CREATED)
+async def add_employee(user: UserIn, session: AsyncSession = Depends(get_session)) -> UserOut:
+    employee = await create_account(session, Employee, user)
+    return UserOut.from_orm(employee)
 
 
 @ROUTER.delete('/employees/{employee_id}')
@@ -55,8 +57,8 @@ async def delete_employee(employee_id: int, session: AsyncSession = Depends(get_
     await make_account_manager(employee_id, Employee).delete(session)
 
 
-@ROUTER.post('/courts', status_code=status.HTTP_201_CREATED, response_model=CourtOut)
-async def add_court(court: CourtIn, session: AsyncSession = Depends(get_session)) -> Court:
+@ROUTER.post('/courts', status_code=status.HTTP_201_CREATED)
+async def add_court(court: CourtIn, session: AsyncSession = Depends(get_session)) -> CourtOut:
     court_db = await Court.get(session, court.name)
     if court_db is not None:
         raise conflict(f"duplicate court name '{court.name}'")
@@ -64,7 +66,7 @@ async def add_court(court: CourtIn, session: AsyncSession = Depends(get_session)
     new_court = Court(court.name, court.surface)
     await new_court.save(session)
 
-    return new_court
+    return CourtOut.from_orm(new_court)
 
 
 @ROUTER.delete('/courts/{court_id}')
@@ -79,7 +81,7 @@ async def delete_court(court_id: int, session: AsyncSession = Depends(get_sessio
 @ROUTER.post('/timeslots', status_code=status.HTTP_201_CREATED, response_model=TimeslotOut)
 async def add_timeslot(timeslot: TimeslotIn, session: AsyncSession = Depends(get_session)) -> Timeslot:
     if timeslot.end <= timeslot.start:
-        raise conflict('end time before start time')
+        raise bad_request('end time before start time')
 
     # check for conflicting timeslots
     timeslots_db = await Timeslot.get_all(session)

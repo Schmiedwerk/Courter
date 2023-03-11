@@ -1,7 +1,9 @@
 import pytest
 from unittest.mock import patch
 
-from . import ID
+from .. import (
+    ID, ADMIN_NAME, ADMIN_ROLE, EMPLOYEE_NAME, EMPLOYEE_ROLE, CUSTOMER_NAME, CUSTOMER_ROLE, PASSWORD, HASH
+)
 from api.db.models import Admin, Employee, Customer
 from api.schemes import UserIn, UserFromToken
 from api.exceptions import not_found, bad_request, USERNAME_UNAVAILABLE_EXCEPTION
@@ -10,15 +12,6 @@ from api.administration.accounts import create_account, make_account_manager, _A
 
 
 MODULE = 'api.administration.accounts.'
-PASSWORD = 'fake_password'
-HASH = 'fake_hash'
-
-ADMIN = 'admin1'
-ADMIN_ROLE = 'admin'
-EMPLOYEE = 'employee1'
-EMPLOYEE_ROLE = 'employee'
-CUSTOMER = 'customer1'
-CUSTOMER_ROLE = 'customer'
 
 
 @pytest.fixture
@@ -29,7 +22,7 @@ def user_get():
 
 @pytest.fixture
 def user_db_target(user_get):
-    user = Customer(CUSTOMER, HASH)
+    user = Customer(CUSTOMER_NAME, HASH)
     user.id = ID
     user_get.return_value = user
     return user
@@ -55,7 +48,7 @@ async def test_create_account_non_existing_username(
 
     new_user = await create_account(session, type(user_db_target), user)
 
-    base_save.assert_called_once()
+    base_save.assert_awaited_once()
     assert new_user == user_db_target
 
 
@@ -69,15 +62,15 @@ async def test_create_account_existing_username(
         await create_account(session, type(user_db_target), user)
 
     get_password_hash.assert_not_called()
-    base_save.assert_not_called()
+    base_save.assert_not_awaited()
 
 
 @pytest.mark.parametrize(
     'user, cls, manager_type',
     [
-        (UserFromToken(id=1, username=ADMIN, role=ADMIN_ROLE), None, _AdminManager),
-        (UserFromToken(id=1, username=EMPLOYEE, role=EMPLOYEE_ROLE), None, _AccountManager),
-        (UserFromToken(id=1, username=CUSTOMER, role=CUSTOMER_ROLE), None, _AccountManager),
+        (UserFromToken(id=1, username=ADMIN_NAME, role=ADMIN_ROLE), None, _AdminManager),
+        (UserFromToken(id=1, username=EMPLOYEE_NAME, role=EMPLOYEE_ROLE), None, _AccountManager),
+        (UserFromToken(id=1, username=CUSTOMER_NAME, role=CUSTOMER_ROLE), None, _AccountManager),
         (1, Customer, _AccountManager)
     ]
 )
@@ -103,7 +96,7 @@ def test_make_account_manager_exception():
 
 @patch.object(Employee, 'get', autospec=True)
 async def test_get_existing_user_from_token(employee_get, session):
-    username = EMPLOYEE
+    username = EMPLOYEE_NAME
     role = EMPLOYEE_ROLE
     user = UserFromToken(id=ID, username=username, role=role)
     user_db_target = Employee(username, HASH)
@@ -118,7 +111,7 @@ async def test_get_existing_user_from_token(employee_get, session):
 
 @patch.object(Customer, 'get', autospec=True)
 async def test_get_existing_user_by_id(customer_get, session):
-    user_db_target = Customer(CUSTOMER, HASH)
+    user_db_target = Customer(CUSTOMER_NAME, HASH)
     user_db_target.id = ID
     customer_get.return_value = user_db_target
 
@@ -141,7 +134,7 @@ async def test_update_username(base_save, account_manager, session):
     new_username = 'customer0'
     user_db = await account_manager.update_username(session, new_username)
 
-    base_save.assert_called_once()
+    base_save.assert_awaited_once()
     assert user_db.username == new_username
 
 
@@ -151,7 +144,7 @@ async def test_update_password(base_save, account_manager, get_password_hash, se
 
     user_db = await account_manager.update_password(session, 'new_fake_password')
 
-    base_save.assert_called_once()
+    base_save.assert_awaited_once()
     assert user_db.password_hash == new_hash
 
 

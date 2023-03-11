@@ -8,7 +8,7 @@ from collections.abc import AsyncGenerator
 
 DB_DRIVERS = {
     'mysql': {
-        'sync' : 'pymysql',
+        'sync': 'pymysql',
         'async': 'aiomysql'
     },
     'postgresql': {

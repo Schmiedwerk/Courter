@@ -7,16 +7,13 @@ from .user import USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH
 _STARTUP_DAY = datetime.datetime.now().date()
 
 
-class BookingBase(BaseModel):
+class _BookingBase(BaseModel):
     date: datetime.date
     timeslot_id: int
     court_id: int
 
-    class Config:
-        orm_mode = True
 
-
-class CustomerBookingIn(BookingBase):
+class CustomerBookingIn(_BookingBase):
     class Config:
         schema_extra = {
             'example': {
@@ -41,7 +38,7 @@ class GuestBookingIn(CustomerBookingIn):
         }
 
 
-class BookingOut(BookingBase):
+class BookingOut(_BookingBase):
     id: int
     customer_id: Optional[int]
     guest_name: Optional[str]
@@ -57,3 +54,18 @@ class BookingOut(BookingBase):
                 'customer_id': None
             }
         }
+
+        orm_mode = True
+
+class AnonymousBookingOut(_BookingBase):
+    class Config:
+        schema_extra = {
+            'example': {
+                'date': _STARTUP_DAY + datetime.timedelta(days=5),
+                'timeslot_id': 7,
+                'court_id': 5,
+                'id': 42
+            }
+        }
+
+        orm_mode = True

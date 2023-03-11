@@ -3,16 +3,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from typing import Union
 import datetime
 
+from . import get_court, get_timeslot, ManagerBase, check_date, check_time
 from ..db.models import Booking, Closing, Timeslot, Court
-from ..exceptions import not_found, conflict, bad_request
+from ..exceptions import conflict
 from ..schemes import GuestBookingIn, CustomerBookingIn
-from . import get_court, get_timeslot, ManagerBase
-
-
-BOOKING_SPAN = datetime.timedelta(days=60)
 
 
 class BookingCreator:
+    BOOKING_SPAN = datetime.timedelta(days=60)
+
     def __init__(self, booking: Union[GuestBookingIn, CustomerBookingIn],
                  customer_id: Union[int, None] = None) -> None:
         self.booking = booking
@@ -20,12 +19,12 @@ class BookingCreator:
         self.timeslot: Union[Timeslot, None] = None
         self.court: Union[Court, None] = None
 
-        self.today = datetime.datetime.now().date()
 
     async def create(self, session: AsyncSession) -> Booking:
-        self._check_date()
+        now = datetime.datetime.now()
+        self._check_date(now)
         self.timeslot = await get_timeslot(session, self.booking.timeslot_id)
-        self._check_timeslot()
+        self._check_timeslot(now)
         self.court = await get_court(session, self.booking.court_id)
 
         await self._check_closings(session)
@@ -42,15 +41,12 @@ class BookingCreator:
         if not hasattr(self.booking, 'guest_name'):
             self.booking.__dict__['guest_name'] = None
 
-    def _check_date(self):
-        if not (self.today <= self.booking.date <= self.today + BOOKING_SPAN):
-            raise bad_request(f"invalid booking date '{self.booking.date}'")
+    def _check_date(self, now: datetime.datetime):
+        check_date(now=now, date_to_check=self.booking.date, date_span=self.BOOKING_SPAN, date_subject='booking')
 
-    def _check_timeslot(self):
-        if self.today == self.booking.date:
-            now = datetime.datetime.now().time()
-            if now > self.timeslot.start:
-                raise bad_request(f"invalid booking timeslot with start time '{self.timeslot.start}'")
+    def _check_timeslot(self, now: datetime.datetime):
+        check_time(now=now, time_to_check=self.timeslot.start,
+                   ref_date=self.booking.date, time_subject='booking timeslot')
 
     async def _check_closings(self, session: AsyncSession) -> None:
         closings = await Closing.get_filtered(session, date=self.booking.date, court_id=self.booking.court_id)

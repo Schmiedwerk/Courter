@@ -82,4 +82,4 @@ else:
 
 
 if __name__ == '__main__' and not args.setup:
-    uvicorn.run('api.main:app', port=args.api_port, reload=args.reload)
+    uvicorn.run('api.main:APP', port=args.api_port, reload=args.reload)

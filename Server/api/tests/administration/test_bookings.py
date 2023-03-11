@@ -2,22 +2,22 @@ import pytest
 from unittest.mock import patch
 import datetime
 
-from . import TODAY, DT_NOW, NOW, ID, GUEST, TIMESLOT_1, COURT, CUSTOMER_BOOKING, GUEST_BOOKING
-from api.db.models import Court, Booking
+from .. import TODAY, NOW, ID, GUEST, TIMESLOT_1, TIMESLOT_PAST_TIME, COURT_1, CUSTOMER_BOOKING, GUEST_BOOKING
+from api.db.models import Booking
 from api.schemes.booking import GuestBookingIn, CustomerBookingIn
 from api.exceptions import bad_request, conflict
 
-from api.administration.bookings import BookingCreator, BookingManager, BOOKING_SPAN
+from api.administration.bookings import BookingCreator, BookingManager
 
 
 MODULE = 'api.administration.bookings.'
-BOOKING_CREATOR = BookingCreator(CustomerBookingIn(date=TODAY, timeslot_id=TIMESLOT_1.id, court_id=COURT.id), ID)
+BOOKING_CREATOR = BookingCreator(CustomerBookingIn(date=TODAY, timeslot_id=TIMESLOT_1.id, court_id=COURT_1.id), ID)
 
 
 @pytest.fixture
 def get_court():
     with patch(f'{MODULE}get_court', autospec=True) as get_court_patch:
-        get_court_patch.return_value = COURT
+        get_court_patch.return_value = COURT_1
         yield get_court_patch
 
 
@@ -32,11 +32,11 @@ def get_timeslot():
     'booking_in, customer_id',
     [
         (GuestBookingIn(date=TODAY, timeslot_id=TIMESLOT_1.id, court_id=TIMESLOT_1.id, guest_name=GUEST), None),
-        (CustomerBookingIn(date=TODAY, timeslot_id=TIMESLOT_1.id, court_id=COURT.id), ID)
+        (CustomerBookingIn(date=TODAY, timeslot_id=TIMESLOT_1.id, court_id=COURT_1.id), ID)
     ]
 )
-async def test_create_booking(booking_in, customer_id, base_save, get_timeslot, get_court,
-                              closing_get_filtered_no_conflict, booking_get_filtered_no_conflict, session):
+async def test_create_booking(booking_in, customer_id, base_save, get_timeslot, datetime_datetime, get_court,
+                              closing_get_filtered_empty, booking_get_filtered_empty, session):
     booking_target = Booking(
         **booking_in.dict(),
         customer_id=customer_id,
@@ -46,7 +46,7 @@ async def test_create_booking(booking_in, customer_id, base_save, get_timeslot, 
     creator = BookingCreator(booking_in, customer_id)
     new_booking = await creator.create(session)
 
-    base_save.assert_called_once()
+    base_save.assert_awaited_once()
     assert new_booking == booking_target
 
 
@@ -55,37 +55,35 @@ async def test_create_booking(booking_in, customer_id, base_save, get_timeslot, 
     [
         (GuestBookingIn(
             date=TODAY - datetime.timedelta(days=1),
-            timeslot_id=TIMESLOT_1.id, court_id=COURT.id, guest_name=GUEST
+            timeslot_id=TIMESLOT_1.id, court_id=COURT_1.id, guest_name=GUEST
         ), None),
         (CustomerBookingIn(
-            date=TODAY + BOOKING_SPAN + datetime.timedelta(days=1),
-            timeslot_id=TIMESLOT_1.id, court_id=COURT.id
+            date=TODAY + BookingCreator.BOOKING_SPAN + datetime.timedelta(days=1),
+            timeslot_id=TIMESLOT_1.id, court_id=COURT_1.id
         ), ID),
     ]
 )
-async def test_create_booking_bad_date(booking_in, customer_id, get_timeslot, get_court, session):
+async def test_create_booking_bad_date(booking_in, customer_id, datetime_datetime, get_timeslot, get_court, session):
     with pytest.raises(type(bad_request())):
         creator = BookingCreator(booking_in, customer_id)
         await creator.create(session)
 
 
-async def test_create_booking_bad_timeslot(get_timeslot, get_court, session):
-    timeslot = get_timeslot.return_value
-    timeslot.start = (DT_NOW - datetime.timedelta(hours=1)).time()
-    timeslot.end = NOW
+async def test_create_booking_bad_timeslot(datetime_datetime, get_timeslot, get_court, session):
+    get_timeslot.return_value = TIMESLOT_PAST_TIME
 
     with pytest.raises(type(bad_request())):
         await BOOKING_CREATOR.create(session)
 
 
-async def test_create_booking_closing_conflict(get_timeslot, get_court, closing_get_filtered_conflict,
-                                               booking_get_filtered_no_conflict, session):
+async def test_create_booking_closing_conflict(datetime_datetime, get_timeslot, get_court, closing_get_filtered_single,
+                                               booking_get_filtered_empty, session):
     with pytest.raises(type(conflict())):
         await BOOKING_CREATOR.create(session)
 
 
-async def test_create_booking_booking_conflict(get_timeslot, get_court, closing_get_filtered_no_conflict,
-                                               booking_get_filtered_conflict, session):
+async def test_create_booking_booking_conflict(datetime_datetime, get_timeslot, get_court, closing_get_filtered_empty,
+                                               booking_get_filtered_single, session):
     with pytest.raises(type(conflict())):
         await BOOKING_CREATOR.create(session)
 

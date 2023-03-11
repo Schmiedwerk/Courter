@@ -27,6 +27,6 @@ rsa
 six
 sniffio
 SQLAlchemy
-starlette < 0.24.0
+starlette
 typing_extensions
 uvicorn

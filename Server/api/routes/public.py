@@ -1,27 +1,25 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-
 import datetime
 
 from ..db.access import get_session
 from ..db.models import Timeslot, Court, Closing
-
 from ..schemes import CourtOut, TimeslotOut, ClosingOut
 
 
 ROUTER = APIRouter(prefix='/public', tags=['public'])
 
 
-@ROUTER.get('/courts', response_model=list[CourtOut])
-async def get_courts(session: AsyncSession = Depends(get_session)) -> list[Court]:
+@ROUTER.get('/courts')
+async def get_courts(session: AsyncSession = Depends(get_session)) -> list[CourtOut]:
     courts = await Court.get_all(session)
-    return list(courts)
+    return list(CourtOut.from_orm(court) for court in courts)
 
 
-@ROUTER.get('/timeslots', response_model=list[TimeslotOut])
-async def get_timeslots(session: AsyncSession = Depends(get_session)) -> list[Timeslot]:
+@ROUTER.get('/timeslots')
+async def get_timeslots(session: AsyncSession = Depends(get_session)) -> list[TimeslotOut]:
     timeslots = await Timeslot.get_all(session)
-    return list(timeslots)
+    return list(TimeslotOut.from_orm(timeslot) for timeslot in timeslots)
 
 
 @ROUTER.get('/closings/{date}')

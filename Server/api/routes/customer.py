@@ -10,7 +10,7 @@ from ..db.models import Customer, Booking
 from ..administration.bookings import BookingCreator, BookingManager
 from ..auth import validate_role
 from ..auth.token import user_from_token
-from ..schemes import UserFromToken, BookingBase, CustomerBookingIn, BookingOut
+from ..schemes import UserFromToken, CustomerBookingIn, BookingOut, AnonymousBookingOut
 from ..exceptions import ACCESS_DENIED_EXCEPTION
 
 
@@ -21,12 +21,13 @@ ROUTER = APIRouter(prefix='/customer', tags=['customer'])
 
 
 @ROUTER.get('/bookings/{date}')
-async def get_bookings_for_date(date: datetime.date, customer: UserFromToken = Depends(_validate_customer),
-                                session: AsyncSession = Depends(get_session)) -> list[Union[BookingOut, BookingBase]]:
+async def get_bookings_for_date(
+        date: datetime.date, customer: UserFromToken = Depends(_validate_customer),
+        session: AsyncSession = Depends(get_session)) -> list[Union[BookingOut, AnonymousBookingOut]]:
     bookings = await Booking.get_filtered(session, date=date)
     return [
         BookingOut.from_orm(booking) if booking.customer_id == customer.id
-        else BookingBase.from_orm(booking) for booking in bookings
+        else AnonymousBookingOut.from_orm(booking) for booking in bookings
     ]
 
 

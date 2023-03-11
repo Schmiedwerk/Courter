@@ -6,13 +6,12 @@ from ..db.models import Booking, Closing, Timeslot, Court
 
 from ..schemes import ClosingIn
 from ..exceptions import conflict, bad_request
-from . import get_court, get_timeslot, ManagerBase
-
-
-CLOSING_SPAN = datetime.timedelta(days=365)
+from . import get_court, get_timeslot, ManagerBase, check_date, check_time
 
 
 class ClosingCreator:
+    CLOSING_SPAN = datetime.timedelta(days=365)
+
     def __init__(self, closing: ClosingIn) -> None:
         self.closing = closing
         self.start_timeslot: Union[Timeslot, None] = None
@@ -20,10 +19,11 @@ class ClosingCreator:
         self.court: Union[Court, None] = None
 
     async def create(self, session: AsyncSession) -> Closing:
-        self._check_date()
+        now = datetime.datetime.now()
+        self._check_date(now)
         self.start_timeslot = await get_timeslot(session, self.closing.start_timeslot_id)
         self.end_timeslot = await get_timeslot(session, self.closing.end_timeslot_id)
-        self._check_timeslots()
+        self._check_timeslots(now)
         self.court = await get_court(session, self.closing.court_id)
         await self._check_bookings(session)
         await self._check_closings(session)
@@ -33,12 +33,13 @@ class ClosingCreator:
 
         return new_closing
 
-    def _check_date(self):
-        today = datetime.datetime.now().date()
-        if not (today <= self.closing.date <= today + CLOSING_SPAN):
-            raise bad_request(f"invalid closing date '{self.closing.date}' (closing span: {CLOSING_SPAN.days} days)")
+    def _check_date(self, now: datetime.datetime):
+        check_date(now=now, date_to_check=self.closing.date, date_span=self.CLOSING_SPAN, date_subject='closing')
 
-    def _check_timeslots(self):
+    def _check_timeslots(self, now: datetime.datetime):
+        check_time(now=now, time_to_check=self.start_timeslot.start,
+                   ref_date=self.closing.date, time_subject='closing start timeslot')
+
         if not self.end_timeslot.start >= self.start_timeslot.start:
             raise bad_request(f'start timeslot with id {self.start_timeslot.id} after end '
                               f'timeslot with id {self.end_timeslot.id}')

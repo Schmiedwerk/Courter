@@ -24,6 +24,7 @@
         <Style x:Key="button" TargetType="Button">
             <Setter Property="FontSize" Value="14" />
             <Setter Property="Width" Value="170" />
+            <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Foreground" Value="#fdfefe" />
             <Setter Property="FocusVisualStyle" Value="{x:Null}" />
@@ -91,6 +92,7 @@
 
         <Style x:Key="mainbutton" TargetType="Button">
             <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Width" Value="200" />
             <Setter Property="Margin" Value="0,20,0,0" />
             <Setter Property="Background" Value="Transparent" />
@@ -126,6 +128,7 @@
 
         <Style x:Key="calAcceptButton" TargetType="Button">
             <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Width" Value="150" />
             <Setter Property="Background" Value="#6f916f" />
             <Setter Property="Foreground" Value="White" />
@@ -164,6 +167,7 @@
         </Style>
 
         <Style x:Key="calDeclineButton" TargetType="Button">
+            <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="FontSize" Value="12" />
             <Setter Property="Width" Value="150" />
             <Setter Property="Background" Value="#EE5C42" />

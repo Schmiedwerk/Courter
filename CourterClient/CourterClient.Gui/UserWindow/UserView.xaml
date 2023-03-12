@@ -52,6 +52,7 @@
                         Width="200"
                         Margin="5"
                         VerticalAlignment="Center"
+                        FontWeight="Bold"
                         Foreground="White"
                         Style="{StaticResource normalText}"
                         Text="{Binding DateManager.CurrentToString}" />

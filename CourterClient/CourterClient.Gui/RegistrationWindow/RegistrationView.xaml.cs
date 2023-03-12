@@ -1,6 +1,8 @@
 ﻿using CourterClient.ApiClient;
 using CourterClient.Gui.Gui;
+using CourterClient.Gui.Gui.PopUpWindows;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -101,17 +103,32 @@ namespace CourterClient.Gui.RegistrationWindow
                     if (response.Successful)
                     {
                         var user = response.Result;
-                        MessageBox.Show($"Benutzer: {user?.Username}\nid: {user?.Id} \nErfolgreich erstellt!", "Benutzer erstellt!");
+                        List<string> infoList = new List<string>();
+                        infoList.Add("Benutzer erstellt:");
+                        infoList.Add(user.Username);
+                        infoList.Add("Benutzer erfolgreich erstellt!");
+                        var info = new CreateInfoView(infoList);
+                        info.ShowDialog();
                         this.Close();
                     }
                     else
                     {
-                        MessageBox.Show($"Anmeldung fehlgeschlagen: \n{response.Detail}", "Anmelden fehlgeschlagen.");
+                        List<string> infoList = new List<string>();
+                        infoList.Add("Anmeldung fehlgeschlagen: ");
+                        infoList.Add($"Fehler {response.Detail}");
+
+                        var view = new LoginErrorView(infoList);
+                        view.ShowDialog();
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Anmeldung fehlgeschlagen: \nDie Passwörter stimmen nicht überein.", "Anmelden fehlgeschlagen.");
+                    List<string> infoList = new List<string>();
+                    infoList.Add("Anmeldung fehlgeschlagen: ");
+                    infoList.Add("Die Passwörter stimmen nicht überein.");
+
+                    var view = new LoginErrorView(infoList);
+                    view.ShowDialog();
                 }
             }
 

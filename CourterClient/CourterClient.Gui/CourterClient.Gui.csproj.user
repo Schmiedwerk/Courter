@@ -20,10 +20,16 @@
     <Compile Update="LoginWindow\LoginView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="PopUpWindows\CreateInfoView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="PopUpWindows\DeleteView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="PopUpWindows\InfoView.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="PopUpWindows\LoginErrorView.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="RegistrationWindow\RegistrationView.xaml.cs">
@@ -55,10 +61,16 @@
     <Page Update="LoginWindow\LoginView.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="PopUpWindows\CreateInfoView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="PopUpWindows\DeleteView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="PopUpWindows\InfoView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="PopUpWindows\LoginErrorView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="RegistrationWindow\RegistrationView.xaml">
